@@ -23,10 +23,8 @@ type GeneratorEcs struct {
 var _ core.Generator = (*GeneratorEcs)(nil)
 
 func NewGeneratorEcs(pkg, pwd string) *GeneratorEcs {
-	core.TagNames = []string{"ecs"}
-
 	g := &GeneratorEcs{
-		GeneratorBaseT:   core.MakeGeneratorB(pkg, "0.gen_ecs.go"),
+		GeneratorBaseT:   core.MakeGeneratorB("ecs", pkg, "0.gen_ecs.go", "ecs"),
 		pwd:              pwd,
 		components:       map[string]*Type{},
 		entities:         map[string]*Type{},
