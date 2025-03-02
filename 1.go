@@ -1,3 +1,3 @@
 package ecs
 
-//go:generate go run github.com/igadmg/goel
+//go:generate go tool github.com/igadmg/goel
