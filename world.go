@@ -6,7 +6,7 @@ type World struct {
 	Systems []System
 }
 
-func MakeEcsWorld() World {
+func MakeWorld() World {
 	return World{}
 }
 

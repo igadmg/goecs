@@ -11,7 +11,9 @@ func TestId_String(t *testing.T) {
 	}{
 		{MakeId(1, 1), "Id(1:1:false:false)"},
 		{MakeId(0, 0), "Id(0:0:false:false)"},
-		{MakeId(12345, 678), "Id(12345:678:false:false)"},
+		{MakeId(12345, 3), "Id(12345:3:false:false)"},
+		{MakeId(1, 1).Allocate(), "Id(1:1:true:false)"},
+		{MakeId(12345, 3).Store(), "Id(12345:3:false:true)"},
 	}
 
 	for _, tt := range tests {

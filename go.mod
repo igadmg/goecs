@@ -4,7 +4,7 @@ go 1.24
 
 replace github.com/igadmg/goel => ../../cmd/goel
 
-replace github.com/igadmg/gogen => ../../cmd/gogen
+replace github.com/igadmg/gogen => ../../pkg/gogen
 
 replace deedles.dev/xiter => ../../pkg/xiter
 

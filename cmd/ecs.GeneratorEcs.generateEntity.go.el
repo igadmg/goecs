@@ -6,8 +6,7 @@ import (
 	"io"
 )
 
-func (g *GeneratorEcs) generateEntity(wr io.Writer, id int, e *Type) {
-
+func (g *GeneratorEcs) genAs(wr io.Writer, e *Type) {
 	for f := range EnumFields(e.Fields) {
 		if fet, ok := f.GetType().(EcsTypeI); ok {
 			for af := range fet.AsComponentsSeq() {
@@ -19,7 +18,7 @@ func (e *<?= e.Name ?>) <?= af.GetA() ?>() *<?= af.GetType().GetName() ?> {
 <?
 				} else {
 ?>
-func (e *<?= e.Name ?>) <?= af.GetA() ?>() <?= af.GetType().GetName() ?> {
+func (e *<?= e.Name ?>) <?= af.GetA() ?>() <?= af.GetTypeName() ?> {
 	return e.<?= f.GetName() ?>.<?= af.GetName() ?>
 }
 <?					
@@ -27,6 +26,10 @@ func (e *<?= e.Name ?>) <?= af.GetA() ?>() <?= af.GetType().GetName() ?> {
 			}
 		}
 	}
+}
+
+func (g *GeneratorEcs) generateEntity(wr io.Writer, id int, e *Type) {
+	g.genAs(wr, e)
 ?>
 
 type storage_<?= e.Name ?> struct {
@@ -232,6 +235,7 @@ type <?= e.Name ?>Query struct {
 	qt := NewType()
 	qt.Name= e.Name + "Query"
 	qt.Fields = e.Fields
+	g.genAs(wr, qt)
 	g.generateQuery(wr, qt, []*Type{e})
 }
 

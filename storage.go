@@ -9,9 +9,8 @@ import (
 type BaseStorage struct {
 	id      uint64
 	id_pool []Id
-	//stored_id_pool []Id
-	TypeId uint32
-	Age    uint64
+	TypeId  uint32
+	Age     uint64
 
 	Ids []Id
 }

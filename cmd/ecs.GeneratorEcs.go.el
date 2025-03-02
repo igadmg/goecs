@@ -19,6 +19,7 @@ import (
 
 	"github.com/igadmg/colonization/ecs"
 	"github.com/igadmg/goex/slicesex"
+	"github.com/igadmg/raylib-go/raymath/vector2"
 )
 
 <?

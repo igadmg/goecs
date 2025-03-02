@@ -3,10 +3,6 @@ package ecs
 import (
 	"bytes"
 	"go/ast"
-	"go/format"
-	"log"
-	"os"
-	"path/filepath"
 
 	"github.com/igadmg/gogen/core"
 )
@@ -24,11 +20,13 @@ type GeneratorEcs struct {
 	EntitesByQueries map[*Type][]*Type
 }
 
+var _ core.Generator = (*GeneratorEcs)(nil)
+
 func NewGeneratorEcs(pwd string) *GeneratorEcs {
 	core.TagNames = []string{"ecs"}
 
 	g := &GeneratorEcs{
-		GeneratorBaseT:   core.MakeGeneratorB /*[Type, Field, core.Func]*/ (),
+		GeneratorBaseT:   core.MakeGeneratorB("0.gen_ecs.go"),
 		pwd:              pwd,
 		components:       map[string]*Type{},
 		entities:         map[string]*Type{},
@@ -151,7 +149,7 @@ func (g *GeneratorEcs) Prepare() {
 	}
 }
 
-func (g *GeneratorEcs) Generate(dir string) {
+func (g *GeneratorEcs) Generate() bytes.Buffer {
 	/*
 		EntitesByQueries: func() map[string][]string {
 			r := map[string][]string{}
@@ -177,40 +175,11 @@ func (g *GeneratorEcs) Generate(dir string) {
 		}
 	*/
 
-	file, err := os.Create(filepath.Join(g.pwd, "0.gen_ecs.go"))
-	if err != nil {
-		log.Fatalf("Failed to create output file: %v", err)
-	}
-	defer file.Close()
-
 	source := bytes.Buffer{}
-	/*
-		t := template.New("gen_ecs.go").
-			Funcs(template.FuncMap{
-				"join":           strings.Join,
-				"get_entity":     g.gen_getEntity,
-				"get_query":      g.gen_getQuery,
-				"all_components": g.gen_allComponents,
-				"components":     g.gen_Components,
-				"all_overrides":  g.gen_allOverrides,
-				"entity_id":      func(i int) int { return i + 1 },
-				//"query_id":       func(i int) int { return i + len(p.Entities) + 1 },
-			})
-		t = gx.Must(t.Parse("{{define \"package\"}}" + "game" + "{{end}}"))
-		//t = gx.Must(t.Parse(ecs_gen_go))
-
-		t.Execute(&source, g.p)
-	*/
-
 	pkg := "game"
 	g.generate(&source, pkg)
-	formattedSource, err := format.Source(source.Bytes())
-	if err != nil {
-		file.Write(source.Bytes())
-		log.Fatalf("Failed to format output file: %v", err)
-	}
 
-	file.Write(formattedSource)
+	return source
 }
 
 /*
