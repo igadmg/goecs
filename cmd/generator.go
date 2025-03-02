@@ -1,4 +1,4 @@
-package ecs
+package cmd
 
 import (
 	"bytes"
@@ -22,11 +22,11 @@ type GeneratorEcs struct {
 
 var _ core.Generator = (*GeneratorEcs)(nil)
 
-func NewGeneratorEcs(pwd string) *GeneratorEcs {
+func NewGeneratorEcs(pkg, pwd string) *GeneratorEcs {
 	core.TagNames = []string{"ecs"}
 
 	g := &GeneratorEcs{
-		GeneratorBaseT:   core.MakeGeneratorB("0.gen_ecs.go"),
+		GeneratorBaseT:   core.MakeGeneratorB(pkg, "0.gen_ecs.go"),
 		pwd:              pwd,
 		components:       map[string]*Type{},
 		entities:         map[string]*Type{},
@@ -150,113 +150,7 @@ func (g *GeneratorEcs) Prepare() {
 }
 
 func (g *GeneratorEcs) Generate() bytes.Buffer {
-	/*
-		EntitesByQueries: func() map[string][]string {
-			r := map[string][]string{}
-
-			for _, e := range p_entites {
-				ec := map[string]bool{}
-				for _, c := range g.gen_allComponents(e) {
-					ec[c.Type.GetName()] = true
-				}
-				for _, q := range p_queries {
-					for _, c := range g.gen_allComponents(q) {
-						if _, ok := ec[c.Type.GetName()]; !ok {
-							goto skip_query
-						}
-					}
-
-					r[q.GetName()] = append(r[q.GetName()], e.GetName())
-				skip_query:
-				}
-			}
-
-			return r
-		}
-	*/
-
 	source := bytes.Buffer{}
-	pkg := "game"
-	g.generate(&source, pkg)
-
+	g.generate(&source, g.PkgName)
 	return source
 }
-
-/*
-func (g *GeneratorEcs) gen_getEntity(name string) (e core.TypeI, ok bool) {
-	e, ok = g.p_entites_by_name[name]
-	return
-}
-
-func (g *GeneratorEcs) gen_getQuery(name string) (e core.TypeI, ok bool) {
-	e, ok = g.p_queries_by_name[name]
-	return
-}
-
-func (g *GeneratorEcs) gen_allComponents(e core.TypeI) (r []*Field) {
-	t, ok := CastType(e)
-	if !ok {
-		return
-	}
-
-	for base := range EnumFields(t.Bases) {
-		r = append(r, g.gen_allComponents(base.Type)...)
-	}
-
-	lcm := map[string]*Field{}
-	lc := g.gen_Components(e)
-	for _, c := range lc {
-		lcm[c.Name] = c
-	}
-	r = slices.Collect(xiter.Filter(slices.Values(r),
-		func(i *Field) bool {
-			_, ok := lcm[i.Name]
-			return !(ok && (i.Tag.HasField(Tag_Virtual) || i.Tag.HasField(Tag_Abstract)))
-		}))
-	r = append(r, lc...)
-
-	return r
-}
-
-func (g *GeneratorEcs) gen_Components(e core.TypeI) (r []*Field) {
-	t, ok := CastType(e)
-	if !ok {
-		return
-	}
-
-	for _, c := range t.Fields {
-		switch field := c.(type) {
-		case *Field:
-			if field.Tag.HasField(Tag_Abstract) {
-				continue
-			}
-
-			r = append(r, field)
-		}
-	}
-
-	return r
-}
-
-func (g *GeneratorEcs) gen_allOverrides(e *Type) []cgo_gen_h_p_o {
-	var r []cgo_gen_h_p_o
-	for base := range EnumFields(e.Bases) {
-		be, ok := CastType(base.Type)
-		if !ok {
-			continue
-		}
-
-		for field := range EnumFields(be.Fields) {
-			if field.Tag.HasField(Tag_Virtual) || field.Tag.HasField(Tag_Abstract) {
-				r = append(r, cgo_gen_h_p_o{
-					Base: be.GetName(),
-					Name: field.Name,
-					Type: field.Type,
-				})
-			}
-		}
-	}
-
-	return r
-}
-*/

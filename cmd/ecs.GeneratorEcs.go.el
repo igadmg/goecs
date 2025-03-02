@@ -1,5 +1,5 @@
 <?go
-package ecs
+package cmd
 
 import (
 	"fmt"
@@ -17,7 +17,7 @@ package <?= pkg ?>
 import (
 	"slices"
 
-	"github.com/igadmg/colonization/ecs"
+	ecs "github.com/igadmg/goecs"
 	"github.com/igadmg/goex/slicesex"
 	"github.com/igadmg/raylib-go/raymath/vector2"
 )

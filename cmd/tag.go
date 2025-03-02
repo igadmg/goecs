@@ -1,4 +1,4 @@
-package ecs
+package cmd
 
 import (
 	"github.com/igadmg/gogen/core"

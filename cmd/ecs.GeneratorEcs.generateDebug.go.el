@@ -1,5 +1,5 @@
 <?go
-package ecs
+package cmd
 
 import (
 	"fmt"

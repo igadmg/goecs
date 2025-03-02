@@ -23,7 +23,6 @@ require (
 )
 
 require (
-	github.com/elliotchance/orderedmap/v3 v3.1.0 // indirect
 	github.com/igadmg/goel v0.0.0-20250123180020-ee1a98205fb0 // indirect
 	golang.org/x/mod v0.23.0 // indirect
 	golang.org/x/sync v0.11.0 // indirect
