@@ -156,7 +156,7 @@ func EnumTypes(x []core.TypeI) iter.Seq[*Type] {
 }
 
 func (t Type) IsTransient() bool {
-	if ecsn := Tag(t.Tag).GetEcs(); !ecsn.IsEmpty() {
+	if ecsn, ok := Tag(t.Tag).GetEcs(); ok {
 		return ecsn.HasField(Tag_Transient)
 	}
 
@@ -192,18 +192,17 @@ func (t Type) ReversedStructComponentsSeq() iter.Seq[EcsFieldI] {
 							return
 						}
 
-						pt := base.GetTag().GetObject("prepare")
-						if !pt.HasField(fn) {
-							return
-						}
+						if pt, ok := base.GetTag().GetObject("prepare"); ok {
+							if prepf, ok := pt.GetField(fn); ok {
+								// here we clone base fields and override "prepare"
+								if field, ok = goex.Clone[EcsFieldI](mf); ok {
+									tag := field.GetTag()
+									mf, _ = field.(core.TokenM)
 
-						if field, ok = goex.Clone[EcsFieldI](mf); ok {
-							tag := field.GetTag()
-							mf, _ = field.(core.TokenM)
-
-							tag.SetField("prepare", pt.GetField(fn))
-
-							mf.SetTag(tag)
+									tag.SetField("prepare", prepf)
+									mf.SetTag(tag)
+								}
+							}
 						}
 					}()
 

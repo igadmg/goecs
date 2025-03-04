@@ -33,7 +33,8 @@ func (f Field) IsEcsRef() bool {
 }
 
 func (f Field) GetA() string {
-	return f.Tag.GetField("a")
+	a, _ := f.Tag.GetField("a")
+	return a
 }
 
 func (f *Field) Clone() any {

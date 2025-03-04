@@ -33,7 +33,7 @@ func (t Tag) GetEcsTag() EcsType {
 	if ok {
 		return EcsEntity
 	}
-	_, ok = t.Data[Tag_Feature] // feature declined // why? rebirth for DrawCalEntity reuse  
+	_, ok = t.Data[Tag_Feature] // feature declined // why? rebirth for DrawCalEntity reuse
 	if ok {
 		return EcsFeature
 	}
@@ -49,7 +49,7 @@ func (t Tag) GetEcsTag() EcsType {
 	return EcsTypeInvalid
 }
 
-func (t Tag) GetEcs() core.Tag {
+func (t Tag) GetEcs() (core.Tag, bool) {
 	v, ok := t.Data[Tag_Archetype]
 	if ok {
 		switch vt := v.(type) {
@@ -57,9 +57,9 @@ func (t Tag) GetEcs() core.Tag {
 			return core.Tag(t).GetObject(Tag_Archetype)
 		case map[string]any:
 			vt["."] = Tag_Archetype
-			return core.Tag{Data: vt}
+			return core.Tag{Data: vt}, true
 		}
-		return core.Tag{Data: core.TagData{".": Tag_Archetype}}
+		return core.Tag{Data: core.TagData{".": Tag_Archetype}}, true
 	}
 	v, ok = t.Data[Tag_Component]
 	if ok {
@@ -68,10 +68,10 @@ func (t Tag) GetEcs() core.Tag {
 			return core.Tag(t).GetObject(Tag_Component)
 		case map[string]any:
 			vt["."] = Tag_Component
-			return core.Tag{Data: vt}
+			return core.Tag{Data: vt}, true
 		}
-		return core.Tag{Data: core.TagData{".": Tag_Component}}
+		return core.Tag{Data: core.TagData{".": Tag_Component}}, true
 	}
 
-	return core.Tag{}
+	return core.Tag{}, false
 }
