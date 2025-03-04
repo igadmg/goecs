@@ -34,27 +34,21 @@ func Do<?= q.Name ?>() iter.Seq[<?= q.Name ?>] {
 {
 	s := &s_<?= e.Name ?>
 	for id := range s.EntityIds() {
-		_, e := ecs.GetT[<?= e.Name ?>](id)
+		index := (int)(id.GetId() - 1)
+		_ = index
 		if !yield(<?= q.Name ?>{
 			Id:       id,
 <?
 		for iq := range EnumFieldsSeq(q.StructComponentsSeq()) {
 			i++
 ?>
-			<?= iq.Name ?>: e.<?= iq.Name ?>,
+			<?= iq.Name ?>: &s.s_<?= iq.Name ?>[index],
 <?
 		}
 ?>
 		}) {
 			return
 		}
-<?
-		if i == 0 {
-?>
-		_ = e
-<?
-		}
-?>
 	}
 }
 <?

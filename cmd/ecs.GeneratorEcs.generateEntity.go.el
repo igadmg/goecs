@@ -110,7 +110,7 @@ func (e *<?= e.Name ?>) Allocate() ecs.Ref[<?= e.Name ?>] {
 		}
  	}
 ?>
-		*e = *ref.Ptr
+		*e = ref.Ptr
 	}
 
 	return ref
@@ -120,7 +120,7 @@ func (e *<?= e.Name ?>) Free() {
 	Free<?= e.Name ?>(e.Id)
 }
 
-func (e *<?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, *<?= e.Name ?>) {
+func (e <?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, <?= e.Name ?>) {
 	index := (int)(id.GetId() - 1)
 	tid := id.GetType()
 	_ = index
@@ -190,7 +190,7 @@ func (e *<?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, *<?= e.Name ?>) {
 	}
 ?>
 
-func Allocate<?= e.Name ?>() (ref ecs.Ref[<?= e.Name ?>], entity *<?= e.Name ?>) {
+func Allocate<?= e.Name ?>() (ref ecs.Ref[<?= e.Name ?>], entity <?= e.Name ?>) {
 	var e *<?= e.Name ?> = nil
 	ref = e.Allocate()
 	return ref, ref.Ptr

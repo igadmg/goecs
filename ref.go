@@ -4,7 +4,10 @@ import "log/slog"
 
 type IsAllocatable[T any] interface {
 	Allocate() Ref[T]
-	Load(age uint64, id Id) (latestAge uint64, e *T)
+}
+
+type IsLoadable[T any] interface {
+	Load(age uint64, id Id) (latestAge uint64, e T)
 }
 
 type IsFreeable interface {
@@ -32,9 +35,10 @@ type IsEntity[T any] interface {
 // Ref can be Defered when no longer in need.
 // Defer will free entity from ECS world, but will keep last
 type Ref[T any] struct {
-	Age uint64
-	Id  Id
-	Ptr *T // make private do not use externally use Get() always
+	Age    uint64
+	Id     Id
+	Ptr    T // make private do not use externally use Get() always
+	isNull bool
 }
 type IsEntityPtr[T any] interface {
 	IsEntity[T]
@@ -43,7 +47,8 @@ type IsEntityPtr[T any] interface {
 
 func MakeRef[T any, V IsEntityPtr[T]](id Id) Ref[T] {
 	return Ref[T]{
-		Id: id,
+		Id:     id,
+		isNull: true,
 	}
 }
 
@@ -51,41 +56,33 @@ func (r *Ref[T]) IsNull() bool {
 	return r.Id.IsNull()
 }
 
-func (r *Ref[T]) Get() *T {
+func (r *Ref[T]) Get() T {
 	if r.Id.IsStored() {
 		return r.Ptr
 	}
 
 	if !r.Id.IsAllocated() {
-		return nil
-	}
-
-	loadFn := func(t any) {
-		if ai, ok := (t).(IsAllocatable[T]); ok {
-			r.Age, r.Ptr = ai.Load(r.Age, r.Id)
-		}
-	}
-
-	if r.Ptr == nil {
 		var t T
-		r.Ptr = &t
-		r.Age = 0
-		loadFn(&t)
+		return t
 	}
-	loadFn(r.Ptr)
+
+	if r.isNull {
+		r.Age = 0
+	}
+
+	var t any = r.Ptr
+	if ai, ok := (t).(IsLoadable[T]); ok {
+		r.Age, r.Ptr = ai.Load(r.Age, r.Id)
+	}
+
+	r.isNull = false
 
 	return r.Ptr
 }
 
-func GetT[
-	T any,
-	V interface {
-		IsAllocatable[T]
-		*T
-	},
-](id Id) (age uint64, e *T) {
+func GetT[T IsLoadable[T]](id Id) (age uint64, e T) {
 	var t T
-	return V(&t).Load(0, id)
+	return t.Load(0, id)
 }
 
 func (r *Ref[T]) Defer() {
@@ -98,6 +95,7 @@ func (r *Ref[T]) Defer() {
 		return
 	}
 
+	r.Get()
 	func(t any) {
 		if t == nil {
 			slog.Warn("Entity already freed.", "id", r.Id)
@@ -110,10 +108,10 @@ func (r *Ref[T]) Defer() {
 		if fi, ok := t.(IsFreeable); ok {
 			fi.Free()
 		}
-	}(r.Get())
+	}(&r.Ptr)
 
 	if !r.Id.IsStored() {
-		r.Ptr = nil
+		r.isNull = true
 	}
 	r.Id = r.Id.Free()
 }
