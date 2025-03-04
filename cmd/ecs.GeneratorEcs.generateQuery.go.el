@@ -9,7 +9,9 @@ import (
 
 func (g *GeneratorEcs) generateQuery(wr io.Writer, q *Type, es []*Type) {
 ?>
-var _ ecs.Id = (*<?= q.Name ?>)(nil).Id
+func _<?= q.Name ?>_constraints() {
+	var _ ecs.Id = <?= q.Name ?>{}.Id
+}
 
 func Age<?= q.Name ?>() (age uint64) {
 	age = 0
