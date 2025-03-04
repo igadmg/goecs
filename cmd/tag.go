@@ -11,6 +11,7 @@ const (
 	Tag_Component = "ecsc"
 	Tag_Query     = "ecsq"
 	Tag_System    = "ecss"
+	Tag_Mixin     = "ecsm"
 
 	Tag_Reference = "reference" // fields marked as reference are not calling Prepare, Defer, Store/Restore methods but are saved
 	Tag_Transient = "transient" // fields marked as transient are not Store()'d or Restore()'d nor saved to file
@@ -21,6 +22,10 @@ const (
 	Tag_Virtual  = "virtual"  // field is virtual - it does have it's own storage and can be overrided by subarchetypes
 )
 
+const (
+	Tag_Fn_RefCall = "fn_ref_call"
+)
+
 type Tag core.Tag
 
 func (t Tag) GetEcsTag() EcsType {
@@ -28,7 +33,7 @@ func (t Tag) GetEcsTag() EcsType {
 	if ok {
 		return EcsEntity
 	}
-	_, ok = t.Data[Tag_Feature] // feature declined
+	_, ok = t.Data[Tag_Feature] // feature declined // why? rebirth for DrawCalEntity reuse  
 	if ok {
 		return EcsFeature
 	}

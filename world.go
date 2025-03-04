@@ -2,13 +2,17 @@ package ecs
 
 import "slices"
 
+type WorldI interface {
+	AddSystem(system System)
+	RemoveSystem(system System)
+	Update(dt float32)
+}
+
 type World struct {
 	Systems []System
 }
 
-func MakeWorld() World {
-	return World{}
-}
+var _ WorldI = (*World)(nil)
 
 func (w *World) AddSystem(system System) {
 	w.Systems = append(w.Systems, system)

@@ -63,6 +63,10 @@ import (
 		g.generateQuery(wr, q, es)
 	}
 
+	for _, t := range g.Types {
+		g.genFunctions(wr, t)
+	}
+
 	g.generateDebug(wr)
 }
 ?>

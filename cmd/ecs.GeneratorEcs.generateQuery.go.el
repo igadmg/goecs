@@ -2,12 +2,15 @@
 package cmd
 
 import (
+	
 	"fmt"
 	"io"
 )
 
 func (g *GeneratorEcs) generateQuery(wr io.Writer, q *Type, es []*Type) {
 ?>
+var _ ecs.Id = (*<?= q.Name ?>)(nil).Id
+
 func Age<?= q.Name ?>() (age uint64) {
 	age = 0
 <?
@@ -20,7 +23,8 @@ func Age<?= q.Name ?>() (age uint64) {
 	return
 }
 
-func Execute<?= q.Name ?>(yield func(q <?= q.Name ?>) bool) {
+func Do<?= q.Name ?>() iter.Seq[<?= q.Name ?>] {
+	return func(yield func(<?= q.Name ?>) bool) {
 <?
 	for  _, e := range es {
 		i := 0
@@ -54,6 +58,7 @@ func Execute<?= q.Name ?>(yield func(q <?= q.Name ?>) bool) {
 <?
 	}
 ?>
+	}
 }
 
 type <?= q.Name ?>Result struct {
@@ -64,7 +69,7 @@ type <?= q.Name ?>Result struct {
 func (r *<?= q.Name ?>Result) Query() bool {
 	if r.Age != Age<?= q.Name ?>() {
 		r.Age = Age<?= q.Name ?>()
-		r.Result = slices.Collect(Execute<?= q.Name ?>)
+		r.Result = slices.Collect(Do<?= q.Name ?>())
 
 		return true
 	}
