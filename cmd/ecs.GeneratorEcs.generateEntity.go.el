@@ -13,22 +13,22 @@ func (g *GeneratorEcs) genAs(wr io.Writer, e *Type) {
 				if af.IsEcsRef() {
 ?>
 
-func (e *<?= e.Name ?>) <?= af.GetA() ?>() *<?= af.GetType().GetName() ?> {
+func (e <?= e.Name ?>) <?= af.GetA() ?>() <?= af.GetType().GetName() ?> {
 	return e.<?= f.GetName() ?>.<?= af.GetName() ?>.Get()
 }
 
-//func (e *<?= e.Name ?>) Set<?= af.GetA() ?>(v <?= af.GetTypeName() ?>) {
-//	e.<?= f.GetName() ?>.<?= af.GetName() ?> = v
-//}
+func (e <?= e.Name ?>) Set<?= af.GetA() ?>(v <?= af.GetTypeName() ?>) {
+	e.<?= f.GetName() ?>.<?= af.GetName() ?> = v
+}
 <?
 				} else {
 ?>
 
-func (e *<?= e.Name ?>) <?= af.GetA() ?>() <?= af.GetTypeName() ?> {
+func (e <?= e.Name ?>) <?= af.GetA() ?>() <?= af.GetTypeName() ?> {
 	return e.<?= f.GetName() ?>.<?= af.GetName() ?>
 }
 
-func (e *<?= e.Name ?>) Set<?= af.GetA() ?>(v <?= af.GetTypeName() ?>) {
+func (e <?= e.Name ?>) Set<?= af.GetA() ?>(v <?= af.GetTypeName() ?>) {
 	e.<?= f.GetName() ?>.<?= af.GetName() ?> = v
 }
 <?					
