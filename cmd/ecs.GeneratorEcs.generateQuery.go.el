@@ -8,6 +8,8 @@ import (
 )
 
 func (g *GeneratorEcs) generateQuery(wr io.Writer, q *Type, es []*Type) {
+	g.genAs(wr, q)
+
 ?>
 func _<?= q.Name ?>_constraints() {
 	var _ ecs.Id = <?= q.Name ?>{}.Id
@@ -25,11 +27,37 @@ func Age<?= q.Name ?>() (age uint64) {
 	return
 }
 
+func Get<?= q.Name ?>(id ecs.Id) (<?= q.Name ?>, bool) {
+	t := id.GetType()
+	index := (int)(id.GetId() - 1)
+	_ = index
+
+<?
+	for  _, e := range es {
+?>
+	if s := &s_<?= e.Name ?>; s.TypeId == t {
+		return <?= q.Name ?>{
+			Id:      id,
+<?
+		for iq := range EnumFieldsSeq(q.StructComponentsSeq()) {
+?>
+			<?= iq.Name ?>: &s.s_<?= iq.Name ?>[index],
+<?
+		}
+?>
+		}, true
+	}
+<?
+	}
+?>
+
+	return <?= q.Name ?>{}, false
+}
+
 func Do<?= q.Name ?>() iter.Seq[<?= q.Name ?>] {
 	return func(yield func(<?= q.Name ?>) bool) {
 <?
 	for  _, e := range es {
-		i := 0
 ?>
 {
 	s := &s_<?= e.Name ?>
@@ -40,7 +68,6 @@ func Do<?= q.Name ?>() iter.Seq[<?= q.Name ?>] {
 			Id:       id,
 <?
 		for iq := range EnumFieldsSeq(q.StructComponentsSeq()) {
-			i++
 ?>
 			<?= iq.Name ?>: &s.s_<?= iq.Name ?>[index],
 <?

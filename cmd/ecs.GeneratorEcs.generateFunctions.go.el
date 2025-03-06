@@ -14,12 +14,31 @@ func (g *GeneratorEcs) genFunctions(wr io.Writer, typ core.TypeI) {
 			continue
 		}
 		if ecsf, ok := f.Tag.GetObject("ecs"); ok {
-			if ecsf.HasField(Tag_Fn_RefCall) {
+			if refcallf, ok := ecsf.GetField(Tag_Fn_RefCall); ok {
+				decltype := refcallf
+				if len(decltype) == 0 {
+					decltype = f.DeclType
+				}
 ?>
 
-func (o <?= f.DeclType ?>) <?= f.Name ?>_ref(id ecs.Id) func(<?= f.DeclArguments() ?>) {
+func (o <?= decltype ?>) <?= f.Name ?>_ref(id ecs.Id) func(<?= f.DeclArguments() ?>) {
 	return func(<?= f.DeclArguments() ?>) {
+<?
+				switch Tag(typ.GetTag()).GetEcsTag() {
+				case EcsEntity:
+?>
 		_, o := ecs.GetT[<?= typ.GetName() ?>](id)
+
+<?
+				case EcsQuery:
+?>
+		o, ok := Get<?= typ.GetName() ?>(id)
+		if !ok {
+			return
+		}
+<?
+				}
+?>
 		o.<?= f.Name ?>(<?= f.CallArguments() ?>)
 	}
 }
