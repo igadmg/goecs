@@ -34,10 +34,12 @@ type EcsTypeI interface {
 	NeedAs() bool
 
 	StructComponentsSeq() iter.Seq[EcsFieldI]
+	QueryComponentsSeq() iter.Seq[EcsFieldI]
 	ComponentsSeq() iter.Seq[EcsFieldI]
 	AsComponentsSeq() iter.Seq[EcsFieldI]
 
 	ReversedStructComponentsSeq() iter.Seq[EcsFieldI]
+	ReversedQueryComponentsSeq() iter.Seq[EcsFieldI]
 }
 
 type Type struct {
@@ -46,6 +48,7 @@ type Type struct {
 
 	Components       *lazy.Of[[]EcsFieldI]
 	StructComponents *lazy.Of[[]EcsFieldI]
+	QueryComponents  *lazy.Of[[]EcsFieldI]
 	needStore        *lazy.Of[bool]
 	needAs           *lazy.Of[bool]
 	HaveBaseEntity   bool
@@ -120,6 +123,11 @@ func (t *Type) New() *Type {
 	})
 	t.StructComponents = lazy.New(func() []EcsFieldI {
 		r := slices.Collect(t.ReversedStructComponentsSeq())
+		slices.Reverse(r)
+		return r
+	})
+	t.QueryComponents = lazy.New(func() []EcsFieldI {
+		r := slices.Collect(t.ReversedQueryComponentsSeq())
 		slices.Reverse(r)
 		return r
 	})
@@ -217,8 +225,70 @@ func (t Type) ReversedStructComponentsSeq() iter.Seq[EcsFieldI] {
 	}
 }
 
+func (t Type) ReversedQueryComponentsSeq() iter.Seq[EcsFieldI] {
+	return func(yield func(EcsFieldI) bool) {
+		lcm := map[string]EcsFieldI{}
+
+		fields := []EcsFieldI{}
+		for _, field := range t.Fields {
+			fields = append(fields, field.(EcsFieldI))
+		}
+		slices.Reverse(fields)
+
+		for _, field := range fields {
+			if field.GetName() == "Id" {
+				continue
+			}
+			if !yield(field) {
+				return
+			}
+			lcm[field.GetName()] = field
+		}
+
+		bases := slices.Clone(t.Bases)
+		slices.Reverse(bases)
+		for _, base := range bases {
+			if bt, ok := base.GetType().(EcsTypeI); ok {
+				for field := range bt.ReversedQueryComponentsSeq() {
+
+					func() {
+						fn := field.GetName()
+						mf, ok := field.(core.TokenM)
+						if !ok {
+							return
+						}
+
+						if pt, ok := base.GetTag().GetObject("prepare"); ok {
+							if prepf, ok := pt.GetField(fn); ok {
+								// here we clone base fields and override "prepare"
+								if field, ok = goex.Clone[EcsFieldI](mf); ok {
+									tag := field.GetTag()
+									mf, _ = field.(core.TokenM)
+
+									tag.SetField("prepare", prepf)
+									mf.SetTag(tag)
+								}
+							}
+						}
+					}()
+
+					_, ok := lcm[field.GetName()]
+					lcm[field.GetName()] = field
+					if !ok && !yield(field) {
+						return
+					}
+				}
+			}
+		}
+	}
+}
+
 func (t Type) StructComponentsSeq() iter.Seq[EcsFieldI] {
 	return slices.Values(t.StructComponents.Value())
+}
+
+func (t Type) QueryComponentsSeq() iter.Seq[EcsFieldI] {
+	return slices.Values(t.QueryComponents.Value())
 }
 
 func (t Type) ComponentsSeq() iter.Seq[EcsFieldI] {

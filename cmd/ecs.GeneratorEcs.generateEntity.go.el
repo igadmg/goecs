@@ -199,7 +199,7 @@ type <?= e.Name ?>Query struct {
 
 	Id ecs.Id
 <?
-	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
+	for c := range EnumFieldsSeq(e.QueryComponentsSeq()) {
 
 ?>
 	<?= c.Name ?> *<?= c.Type.GetName() ?>
