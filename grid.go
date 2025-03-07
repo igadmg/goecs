@@ -1,7 +1,77 @@
 package ecs
 
-import "github.com/igadmg/raylib-go/raymath/vector2"
+import (
+	"iter"
 
+	"github.com/igadmg/raylib-go/raymath/vector2"
+)
+
+type Grid[T any] struct {
+	Size  vector2.Int
+	Start Ref[T]
+}
+
+func MakeGrid[T any](size vector2.Int, start Ref[T]) Grid[T] {
+	return Grid[T]{
+		Size:  size,
+		Start: start,
+	}
+}
+
+func (g Grid[T]) IsValid(xy vector2.Int) bool {
+	return vector2.GreaterEq(xy, vector2.Zero[int]()) && vector2.Less(xy, g.Size)
+}
+
+func (g Grid[T]) Clamp(xy vector2.Int) vector2.Int {
+	return xy.Clamp0V(g.Size.AddXY(-1, -1))
+}
+
+func (g Grid[T]) CellsSeq() iter.Seq[Ref[T]] {
+	return func(yield func(Ref[T]) bool) {
+
+	}
+}
+
+func (g Grid[T]) Cell(xy vector2.Int) Ref[T] {
+	ref := g.Start
+	ref.Id = ref.Id.SetId(ref.Id.GetId() + uint64(g.Size.X()*xy.Y()+xy.X()))
+	ref.Get()
+	return ref
+}
+
+func (g Grid[T]) Region(xy vector2.Int) GridRegion[T] {
+	return GridRegion[T]{
+		XY:   xy,
+		grid: g,
+	}
+}
+
+type GridRegion[T any] struct {
+	XY   vector2.Int
+	grid Grid[T]
+}
+
+func (r GridRegion[T]) Center() T {
+	xy := r.XY
+	if !r.grid.IsValid(xy) {
+		xy = r.grid.Clamp(xy)
+	}
+	return r.grid.Cell(xy).Ptr
+}
+
+func (r GridRegion[T]) Cell(xy vector2.Int) T {
+	gxy := r.XY.Add(xy)
+	if !r.grid.IsValid(gxy) {
+		gxy = r.grid.Clamp(gxy)
+	}
+	return r.grid.Cell(gxy).Ptr
+}
+
+func (r GridRegion[T]) CellXY(x, y int) T {
+	return r.Cell(vector2.NewInt(x, y))
+}
+
+// Deprecated
 type CellGrid[T any] struct {
 	size  vector2.Int
 	Cells []T
@@ -49,6 +119,7 @@ func (g *CellGrid[T]) CellGridRegion(xy vector2.Int) CellGridRegion[T] {
 	}
 }
 
+// Deprecated
 type CellGridRegion[T any] struct {
 	XY   vector2.Int
 	grid *CellGrid[T]
