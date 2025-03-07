@@ -209,12 +209,6 @@ type <?= e.Name ?>Query struct {
 }
 <?
 	}
-
-
-	qt := NewType()
-	qt.Name= e.Name + "Query"
-	qt.Fields = e.Fields
-	g.generateQuery(wr, qt, []*Type{e})
 }
 
 func (g *GeneratorEcs) genFieldEcsCall(wr io.Writer, f *Field, call string) {

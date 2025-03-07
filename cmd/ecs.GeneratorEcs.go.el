@@ -35,6 +35,12 @@ import (
 // <?= e.Name ?>
 <?
 		g.generateEntity(wr, i+1, e)
+
+		qt := NewType()
+		qt.Name= e.Name + "Query"
+		qt.Fields = e.Fields
+		g.queries[qt.Name] = qt
+		g.EntitesByQueries[qt] = append(g.EntitesByQueries[qt], e)
 	}
 ?>
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,6 +60,24 @@ import (
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //// Queries num <?= len(g.EntitesByQueries) ?>
 ///
+
+var _ bool = _Query_constraints(false)
+
+func _Query_constraints(v bool) bool {
+	if !v {
+		return true
+	}
+
+<?
+	for q := range g.EntitesByQueries {
+?>
+	_<?= q.Name ?>_constraints()
+<?
+	}
+?>
+
+	return true
+}
 <?
 	for q, es := range g.EntitesByQueries {
 ?>
