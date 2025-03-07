@@ -17,6 +17,10 @@ func (e <?= t.Name ?>) <?= af.GetA() ?>() <?= af.GetType().GetName() ?> {
 	return e.<?= f.GetName() ?>.<?= af.GetName() ?>.Get()
 }
 
+func (e <?= t.Name ?>) <?= af.GetA() ?>Ref() ecs.Ref[<?= af.GetType().GetName() ?>] {
+	return e.<?= f.GetName() ?>.<?= af.GetName() ?>
+}
+
 func (e <?= t.Name ?>) Set<?= af.GetA() ?>(v <?= af.GetTypeName() ?>) {
 	e.<?= f.GetName() ?>.<?= af.GetName() ?> = v
 }
