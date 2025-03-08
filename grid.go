@@ -28,13 +28,27 @@ func (g Grid[T]) Clamp(xy vector2.Int) vector2.Int {
 
 func (g Grid[T]) CellsSeq() iter.Seq[Ref[T]] {
 	return func(yield func(Ref[T]) bool) {
+		for i := range g.Size.Product() {
+			ref := g.Start
+			// TODO: ugly rewrite
+			ref.Age = 0
+			ref.Id = ref.Id.SetId(g.Start.Id.GetId() + uint64(i))
+			ref.Id = ref.Id.Allocate()
+			ref.Get()
 
+			if !yield(ref) {
+				return
+			}
+		}
 	}
 }
 
 func (g Grid[T]) Cell(xy vector2.Int) Ref[T] {
 	ref := g.Start
-	ref.Id = ref.Id.SetId(ref.Id.GetId() + uint64(g.Size.X()*xy.Y()+xy.X()))
+	// TODO: ugly rewrite
+	ref.Age = 0
+	ref.Id = ref.Id.SetId(g.Start.Id.GetId() + uint64(g.Size.X()*xy.Y()+xy.X()))
+	ref.Id = ref.Id.Allocate()
 	ref.Get()
 	return ref
 }
