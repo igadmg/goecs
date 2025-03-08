@@ -8,9 +8,7 @@ import (
 )
 
 type GeneratorEcs struct {
-	core.GeneratorBaseT //[Type, Field, core.Func]
-
-	pwd string
+	core.GeneratorBaseT
 
 	components map[string]*Type
 	entities   map[string]*Type
@@ -22,10 +20,9 @@ type GeneratorEcs struct {
 
 var _ core.Generator = (*GeneratorEcs)(nil)
 
-func NewGeneratorEcs(pkg, pwd string) *GeneratorEcs {
+func NewGeneratorEcs() core.Generator {
 	g := &GeneratorEcs{
-		GeneratorBaseT:   core.MakeGeneratorB("ecs", pkg, "0.gen_ecs.go", "ecs"),
-		pwd:              pwd,
+		GeneratorBaseT:   core.MakeGeneratorB("ecs", "0.gen_ecs.go", "ecs"),
 		components:       map[string]*Type{},
 		entities:         map[string]*Type{},
 		queries:          map[string]*Type{},
@@ -147,8 +144,8 @@ func (g *GeneratorEcs) Prepare() {
 	}
 }
 
-func (g *GeneratorEcs) Generate() bytes.Buffer {
+func (g *GeneratorEcs) Generate(pkg string) bytes.Buffer {
 	source := bytes.Buffer{}
-	g.generate(&source, g.PkgName)
+	g.generate(&source, pkg)
 	return source
 }

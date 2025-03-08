@@ -17,7 +17,7 @@ type storage_<?= e.Name ?> struct {
 <?
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
 ?>
-	s_<?= c.Name ?> []<?= c.Type.GetName() ?>
+	s_<?= c.Name ?> []<?= c.GetTypeName() ?>
 <?
 	}
 ?>
@@ -106,7 +106,7 @@ func (e <?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, <?= e.Name ?>) {
 			for field := range EnumFields(e.Fields) {
 				if field.Tag.HasField(Tag_Virtual) || field.Tag.HasField(Tag_Abstract) {
 ?>
-			e.<?= field.Name ?> = &s.s_<?= field.Name ?>[index].<?= field.Type.GetName() ?>
+			e.<?= field.Name ?> = &s.s_<?= field.Name ?>[index].<?= field.GetTypeName() ?>
 <?
 				} else {
 ?>
@@ -116,7 +116,7 @@ func (e <?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, <?= e.Name ?>) {
 			}
 			for c := range e.ComponentOverridesSeq() {
 ?>
-			e.<?= c.Base.Name ?>.<?= c.Field.Name ?> = &e.<?= c.Field.Name ?>.<?= c.Field.Type.GetName() ?>
+			e.<?= c.Base.Name ?>.<?= c.Field.Name ?> = &e.<?= c.Field.Name ?>.<?= c.Field.GetTypeName() ?>
 <?
 			}
 ?>
@@ -140,7 +140,7 @@ func (e <?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, <?= e.Name ?>) {
  	}
 	for c := range e.ComponentOverridesSeq() {
 ?>
-			e.<?= c.Base.Name ?>.<?= c.Field.Name ?> = &e.<?= c.Field.Name ?>.<?= c.Field.Type.GetName() ?>
+			e.<?= c.Base.Name ?>.<?= c.Field.Name ?> = &e.<?= c.Field.Name ?>.<?= c.Field.GetTypeName() ?>
 <?
 	}
 ?>
@@ -173,7 +173,7 @@ func Free<?= e.Name ?>(id ecs.Id) {
 <?
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
 ?>
-	s.s_<?= c.Name ?>[index] = <?= c.Type.GetName() ?>{}
+	s.s_<?= c.Name ?>[index] = <?= c.GetTypeName() ?>{}
 <?
  	}
 ?>
@@ -195,14 +195,14 @@ func Update<?= e.Name ?>Id(id ecs.Id) {
 
 // Auto-generated query for <?= e.Name ?> entity
 type <?= e.Name ?>Query struct {
-	_ MetaTag `ecs:"ecsq"`
+	_ ecs.MetaTag `ecs:"ecsq"`
 
 	Id ecs.Id
 <?
 	for c := range EnumFieldsSeq(e.QueryComponentsSeq()) {
 
 ?>
-	<?= c.Name ?> *<?= c.Type.GetName() ?>
+	<?= c.Name ?> *<?= c.GetTypeName() ?>
 <?
 	}
 ?>
