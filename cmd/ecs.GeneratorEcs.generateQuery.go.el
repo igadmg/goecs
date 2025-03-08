@@ -11,6 +11,7 @@ func (g *GeneratorEcs) generateQuery(wr io.Writer, q *Type, es []*Type) {
 	g.genAs(wr, q)
 
 ?>
+
 func _<?= q.Name ?>_constraints() {
 	var _ ecs.Id = <?= q.Name ?>{}.Id
 }

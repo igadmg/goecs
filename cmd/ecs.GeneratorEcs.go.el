@@ -28,6 +28,25 @@ import (
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //// Entities num <?= len(g.entities) ?>
 ///
+
+var _ bool = _Entity_constraints(false)
+
+func _Entity_constraints(v bool) bool {
+	if !v {
+		return true
+	}
+
+<?
+	for e := range maps.Values(g.entities) {
+?>
+	_<?= e.Name ?>_constraints()
+<?
+	}
+?>
+
+	return true
+}
+
 <?
 	for i, e := range xiter.Enumerate(maps.Values(g.entities)) {
 ?>

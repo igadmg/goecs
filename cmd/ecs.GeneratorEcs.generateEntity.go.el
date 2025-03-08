@@ -11,6 +11,10 @@ func (g *GeneratorEcs) generateEntity(wr io.Writer, id int, e *Type) {
 
 ?>
 
+func _<?= e.Name ?>_constraints() {
+	var _ ecs.Id = <?= e.Name ?>{}.Id
+}
+
 type storage_<?= e.Name ?> struct {
 	ecs.BaseStorage
 
