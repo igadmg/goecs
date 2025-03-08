@@ -293,22 +293,6 @@ func (e *<?= typ.Name ?>) Restore() {
 <?
 	}
 
-	/*
-	// Not sure about that, but that fixes problem.
-	for b, p := range typ.baseParameters.AllFromFront() {
-		if bt, ok := CastField(p.Base); !ok || !bt.IsTransient() {
-			continue
-		}
-
-		Need to decouple Create and Construct here and call only parameterless
-
-?>
-	e.<?= b ?>.Create(<?= strings.Join(p.Params, ",") ?>)
-<?
-	}
-
-		Need to call base construct from consturct
-	*/
 ?>
 	Update<?= typ.Name ?>Id(e.Id.Restore())
 }
