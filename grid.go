@@ -6,12 +6,12 @@ import (
 	"github.com/igadmg/raylib-go/raymath/vector2"
 )
 
-type Grid[T any] struct {
+type Grid[T IsLoadable[T]] struct {
 	Size  vector2.Int
 	Start Ref[T]
 }
 
-func MakeGrid[T any](size vector2.Int, start Ref[T]) Grid[T] {
+func MakeGrid[T IsLoadable[T]](size vector2.Int, start Ref[T]) Grid[T] {
 	return Grid[T]{
 		Size:  size,
 		Start: start,
@@ -26,31 +26,23 @@ func (g Grid[T]) Clamp(xy vector2.Int) vector2.Int {
 	return xy.Clamp0V(g.Size.AddXY(-1, -1))
 }
 
-func (g Grid[T]) CellsSeq() iter.Seq[Ref[T]] {
-	return func(yield func(Ref[T]) bool) {
+func (g Grid[T]) CellsSeq() iter.Seq[T] {
+	return func(yield func(T) bool) {
 		for i := range g.Size.Product() {
-			ref := g.Start
-			// TODO: ugly rewrite
-			ref.Age = 0
-			ref.Id = ref.Id.SetId(g.Start.Id.GetId() + uint64(i))
-			ref.Id = ref.Id.Allocate()
-			ref.Get()
+			id := g.Start.Id.SetId(g.Start.Id.GetId() + uint64(i)).Allocate()
+			_, t := GetT[T](id)
 
-			if !yield(ref) {
+			if !yield(t) {
 				return
 			}
 		}
 	}
 }
 
-func (g Grid[T]) Cell(xy vector2.Int) Ref[T] {
-	ref := g.Start
-	// TODO: ugly rewrite
-	ref.Age = 0
-	ref.Id = ref.Id.SetId(g.Start.Id.GetId() + uint64(g.Size.X()*xy.Y()+xy.X()))
-	ref.Id = ref.Id.Allocate()
-	ref.Get()
-	return ref
+func (g Grid[T]) Cell(xy vector2.Int) T {
+	id := g.Start.Id.SetId(g.Start.Id.GetId() + uint64(g.Size.X()*xy.Y()+xy.X())).Allocate()
+	_, t := GetT[T](id)
+	return t
 }
 
 func (g Grid[T]) Region(xy vector2.Int) GridRegion[T] {
@@ -60,7 +52,7 @@ func (g Grid[T]) Region(xy vector2.Int) GridRegion[T] {
 	}
 }
 
-type GridRegion[T any] struct {
+type GridRegion[T IsLoadable[T]] struct {
 	XY   vector2.Int
 	grid Grid[T]
 }
@@ -70,7 +62,7 @@ func (r GridRegion[T]) Center() T {
 	if !r.grid.IsValid(xy) {
 		xy = r.grid.Clamp(xy)
 	}
-	return r.grid.Cell(xy).Ptr
+	return r.grid.Cell(xy)
 }
 
 func (r GridRegion[T]) Cell(xy vector2.Int) T {
@@ -78,7 +70,7 @@ func (r GridRegion[T]) Cell(xy vector2.Int) T {
 	if !r.grid.IsValid(gxy) {
 		gxy = r.grid.Clamp(gxy)
 	}
-	return r.grid.Cell(gxy).Ptr
+	return r.grid.Cell(gxy)
 }
 
 func (r GridRegion[T]) CellXY(x, y int) T {
