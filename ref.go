@@ -52,7 +52,7 @@ func MakeRef[T any, V IsEntityPtr[T]](id Id) Ref[T] {
 	}
 }
 
-func (r *Ref[T]) IsNull() bool {
+func (r Ref[T]) IsNull() bool {
 	return r.Id.IsNull()
 }
 

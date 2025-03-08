@@ -4,6 +4,10 @@ type BaseEntity struct {
 	Id Id
 }
 
+func (e BaseEntity) IsNull() bool {
+	return e.Id.IsNull()
+}
+
 //func (e *BaseEntity) Store() {
 //	e.Id = e.Id.Store()
 //}

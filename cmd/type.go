@@ -44,7 +44,8 @@ type EcsTypeI interface {
 
 type Type struct {
 	core.Type
-	Etype EcsType
+
+	EType EcsType
 
 	Components       *lazy.Of[[]EcsFieldI]
 	StructComponents *lazy.Of[[]EcsFieldI]
@@ -163,6 +164,10 @@ func EnumTypes(x []core.TypeI) iter.Seq[*Type] {
 	}
 }
 
+func (t Type) CanHaveIdField() bool {
+	return t.EType == EcsComponent
+}
+
 func (t Type) IsTransient() bool {
 	if ecsn, ok := Tag(t.Tag).GetEcs(); ok {
 		return ecsn.HasField(Tag_Transient)
@@ -178,7 +183,7 @@ func (t Type) ReversedStructComponentsSeq() iter.Seq[EcsFieldI] {
 		fields := slices.Collect(t.ComponentsSeq())
 		slices.Reverse(fields)
 		for _, field := range fields {
-			if field.GetName() == "Id" {
+			if !t.CanHaveIdField() && field.GetName() == "Id" {
 				continue
 			}
 			if !yield(field) {
@@ -236,7 +241,7 @@ func (t Type) ReversedQueryComponentsSeq() iter.Seq[EcsFieldI] {
 		slices.Reverse(fields)
 
 		for _, field := range fields {
-			if field.GetName() == "Id" {
+			if !t.CanHaveIdField() && field.GetName() == "Id" {
 				continue
 			}
 			if !yield(field) {
@@ -391,7 +396,7 @@ func (t *Type) Prepare(tf core.TypeFactory) error {
 		}
 	}
 
-	t.Etype = Tag(t.Tag).GetEcsTag()
+	t.EType = Tag(t.Tag).GetEcsTag()
 
 	return nil
 }

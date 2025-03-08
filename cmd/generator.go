@@ -52,7 +52,7 @@ func (g *GeneratorEcs) NewType(t core.TypeI, spec *ast.TypeSpec) (core.TypeI, er
 			return nil, err
 		}
 
-		et.Etype = Tag(et.Tag).GetEcsTag()
+		et.EType = Tag(et.Tag).GetEcsTag()
 
 		switch Tag(et.Tag).GetEcsTag() {
 		case EcsEntity:
