@@ -8,7 +8,7 @@ import (
 	"github.com/igadmg/gogen/core"
 )
 
-func (g *GeneratorEcs) genFunctions(wr io.Writer, typ core.TypeI) {
+func (g *GeneratorEcs) generateFunctions(wr io.Writer, typ core.TypeI) {
 	for f := range core.EnumFuncsSeq(typ.FuncsSeq()) {
 		if f.Tag.IsEmpty() {
 			continue

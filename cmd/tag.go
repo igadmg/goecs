@@ -11,7 +11,6 @@ const (
 	Tag_Component = "ecsc"
 	Tag_Query     = "ecsq"
 	Tag_System    = "ecss"
-	Tag_Mixin     = "ecsm"
 
 	Tag_Reference = "reference" // fields marked as reference are not calling Prepare, Defer, Store/Restore methods but are saved
 	Tag_Transient = "transient" // fields marked as transient are not Store()'d or Restore()'d nor saved to file
@@ -29,48 +28,51 @@ const (
 type Tag core.Tag
 
 func (t Tag) GetEcsTag() EcsType {
-	_, ok := t.Data[Tag_Archetype]
-	if ok {
+	if _, ok := t.Data[Tag_Archetype]; ok {
 		return EcsEntity
 	}
-	_, ok = t.Data[Tag_Feature] // feature declined // why? rebirth for DrawCalEntity reuse
-	if ok {
+	if _, ok := t.Data[Tag_Feature]; ok {
 		return EcsFeature
 	}
-	_, ok = t.Data[Tag_Component]
-	if ok {
+	if _, ok := t.Data[Tag_Component]; ok {
 		return EcsComponent
 	}
-	_, ok = t.Data[Tag_Query]
-	if ok {
+	if _, ok := t.Data[Tag_Query]; ok {
 		return EcsQuery
+	}
+	if _, ok := t.Data[Tag_System]; ok {
+		return EcsSystem
 	}
 
 	return EcsTypeInvalid
 }
 
 func (t Tag) GetEcs() (core.Tag, bool) {
-	v, ok := t.Data[Tag_Archetype]
-	if ok {
+	gt := func(tag string, v any) (core.Tag, bool) {
 		switch vt := v.(type) {
 		case yaml.Node:
-			return core.Tag(t).GetObject(Tag_Archetype)
+			return core.Tag(t).GetObject(tag)
 		case map[string]any:
-			vt["."] = Tag_Archetype
+			vt["."] = tag
 			return core.Tag{Data: vt}, true
 		}
-		return core.Tag{Data: core.TagData{".": Tag_Archetype}}, true
+		return core.Tag{Data: core.TagData{".": tag}}, true
 	}
-	v, ok = t.Data[Tag_Component]
-	if ok {
-		switch vt := v.(type) {
-		case yaml.Node:
-			return core.Tag(t).GetObject(Tag_Component)
-		case map[string]any:
-			vt["."] = Tag_Component
-			return core.Tag{Data: vt}, true
-		}
-		return core.Tag{Data: core.TagData{".": Tag_Component}}, true
+
+	if v, ok := t.Data[Tag_Archetype]; ok {
+		return gt(Tag_Archetype, v)
+	}
+	if v, ok := t.Data[Tag_Feature]; ok {
+		return gt(Tag_Feature, v)
+	}
+	if v, ok := t.Data[Tag_Component]; ok {
+		return gt(Tag_Component, v)
+	}
+	if v, ok := t.Data[Tag_Query]; ok {
+		return gt(Tag_Query, v)
+	}
+	if v, ok := t.Data[Tag_System]; ok {
+		return gt(Tag_System, v)
 	}
 
 	return core.Tag{}, false

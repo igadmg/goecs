@@ -14,6 +14,7 @@ type GeneratorEcs struct {
 	entities   map[string]*Type
 	queries    map[string]*Type
 	features   map[string]*Type
+	systems    map[string]*Type
 
 	EntitesByQueries map[*Type][]*Type
 }
@@ -27,6 +28,7 @@ func NewGeneratorEcs() core.Generator {
 		entities:         map[string]*Type{},
 		queries:          map[string]*Type{},
 		features:         map[string]*Type{},
+		systems:          map[string]*Type{},
 		EntitesByQueries: map[*Type][]*Type{},
 	}
 	g.G = g
@@ -60,6 +62,8 @@ func (g *GeneratorEcs) NewType(t core.TypeI, spec *ast.TypeSpec) (core.TypeI, er
 			g.components[et.Name] = et
 		case EcsQuery:
 			g.queries[et.Name] = et
+		case EcsSystem:
+			g.systems[et.Name] = et
 		}
 	}
 

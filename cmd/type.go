@@ -3,6 +3,7 @@ package cmd
 import (
 	"iter"
 	"slices"
+	"strings"
 
 	"deedles.dev/xiter"
 	"github.com/hymkor/go-lazy"
@@ -18,6 +19,7 @@ const (
 	EcsFeature
 	EcsComponent
 	EcsQuery
+	EcsSystem
 )
 
 type EcsTypeI interface {
@@ -390,7 +392,7 @@ func (t *Type) Prepare(tf core.TypeFactory) error {
 	}
 
 	for _, base := range t.Bases {
-		if base.GetTypeName() == "ecs.BaseEntity" {
+		if strings.HasPrefix(base.GetTypeName(), "ecs.Entity") {
 			t.HaveBaseEntity = true
 			break
 		}
