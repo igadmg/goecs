@@ -11,7 +11,7 @@ func (g *GeneratorEcs) generateSystem(wr io.Writer, t *Type) {
 
 var _ ecs.System = (*`))
 	wr.Write([]byte(fmt.Sprintf("%v", t.Name)))
-	wr.Write([]byte(`)(nil) // TODO move to ecss generation part
+	wr.Write([]byte(`)(nil)
 `))
 
 }
