@@ -114,6 +114,15 @@ func (g *GeneratorEcs) NewFunc(f core.FuncI, spec *ast.FuncDecl) (core.FuncI, er
 	return f, nil
 }
 
+func (g *GeneratorEcs) GetEcsType(name string) (t EcsTypeI, ok bool) {
+	if t, ok := g.GetType(name); ok {
+		et, ok := t.(EcsTypeI)
+		return et, ok
+	}
+
+	return nil, ok
+}
+
 func (g *GeneratorEcs) Prepare() {
 	g.GeneratorBaseT.Prepare()
 

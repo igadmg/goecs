@@ -19,9 +19,20 @@ func (g *GeneratorEcs) generateFunctions(wr io.Writer, typ core.TypeI) {
 				if len(decltype) == 0 {
 					decltype = f.DeclType
 				}
+
+				if ft, ok := g.GetEcsType(decltype); ok && ft.GetEcsTag().GetEcsTag() == EcsEntity {
+?>
+
+func (o <?= decltype ?>) <?= f.Name ?>_ref() func(<?= f.DeclArguments() ?>) {
+	id := o.Id
+<?
+				} else {
 ?>
 
 func (o <?= decltype ?>) <?= f.Name ?>_ref(id ecs.Id) func(<?= f.DeclArguments() ?>) {
+<?
+				}
+?>
 	return func(<?= f.DeclArguments() ?>) {
 <?
 				switch Tag(typ.GetTag()).GetEcsTag() {

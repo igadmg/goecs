@@ -25,6 +25,8 @@ const (
 type EcsTypeI interface {
 	core.TypeI
 
+	GetEcsTag() Tag
+
 	IsTransient() bool
 
 	//
@@ -59,6 +61,10 @@ type Type struct {
 
 var _ EcsTypeI = (*Type)(nil)
 var _ core.TypeBuilder = (*Type)(nil)
+
+func (t Type) GetEcsTag() Tag {
+	return Tag(t.Tag)
+}
 
 func (t Type) CanCall(name string) bool {
 	switch name {
