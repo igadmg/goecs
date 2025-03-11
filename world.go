@@ -24,7 +24,7 @@ func (w *World) RemoveSystem(system System) {
 		return
 	}
 
-	w.Systems = slices.Delete(w.Systems, si, 1)
+	w.Systems = slices.Delete(w.Systems, si, si+1)
 }
 
 func (w *World) Update(dt float32) {
