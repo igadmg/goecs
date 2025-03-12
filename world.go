@@ -3,6 +3,8 @@ package ecs
 import "slices"
 
 type WorldI interface {
+	IsDeferable
+
 	AddSystem(system System)
 	RemoveSystem(system System)
 	Update(dt float32)
