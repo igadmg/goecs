@@ -6,14 +6,16 @@ import (
 )
 
 const (
-	Tag_Archetype = "ecsa"
-	Tag_Feature   = "ecsf"
-	Tag_Component = "ecsc"
-	Tag_Query     = "ecsq"
-	Tag_System    = "ecss"
+	Tag_Archetype = "archetype"
+	Tag_Feature   = "feature"
+	Tag_Component = "component"
+	Tag_Query     = "query"
+	Tag_System    = "system"
 
 	Tag_Reference = "reference" // fields marked as reference are not calling Prepare, Defer, Store/Restore methods but are saved
 	Tag_Transient = "transient" // fields marked as transient are not Store()'d or Restore()'d nor saved to file
+
+	Tag_Cached = "cached" // queries marked as cached get *Cached structs generated
 )
 
 const (

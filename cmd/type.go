@@ -49,7 +49,8 @@ type EcsTypeI interface {
 type Type struct {
 	core.Type
 
-	EType EcsType
+	EType     EcsType
+	QueryTags string
 
 	Components       *lazy.Of[[]EcsFieldI]
 	StructComponents *lazy.Of[[]EcsFieldI]
@@ -405,6 +406,13 @@ func (t *Type) Prepare(tf core.TypeFactory) error {
 	}
 
 	t.EType = Tag(t.Tag).GetEcsTag()
+	if t.EType != EcsTypeInvalid {
+		if et, ok := Tag(t.Tag).GetEcs(); ok {
+			if et.HasField(Tag_Cached) {
+				t.QueryTags = Tag_Cached
+			}
+		}
+	}
 
 	return nil
 }

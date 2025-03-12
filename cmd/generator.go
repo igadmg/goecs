@@ -23,7 +23,7 @@ var _ core.Generator = (*GeneratorEcs)(nil)
 
 func NewGeneratorEcs() core.Generator {
 	g := &GeneratorEcs{
-		GeneratorBaseT:   core.MakeGeneratorB("ecs", "0.gen_ecs.go", "ecs"),
+		GeneratorBaseT:   core.MakeGeneratorB("ecs", "ecs"),
 		components:       map[string]*Type{},
 		entities:         map[string]*Type{},
 		queries:          map[string]*Type{},

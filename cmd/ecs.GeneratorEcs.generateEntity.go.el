@@ -199,7 +199,7 @@ func Update<?= e.Name ?>Id(id ecs.Id) {
 
 // Auto-generated query for <?= e.Name ?> entity
 type <?= e.Name ?>Query struct {
-	_ ecs.MetaTag `ecs:"ecsq"`
+	_ ecs.MetaTag `ecs:"query: {<?= e.QueryTags ?>}"`
 
 	Id ecs.Id
 <?

@@ -7,6 +7,7 @@ import (
 	"maps"
 
 	"deedles.dev/xiter"
+	"github.com/igadmg/gogen/core"
 )
 
 func (g *GeneratorEcs) generate(wr io.Writer, pkg string) {
@@ -66,6 +67,7 @@ func _Entity_constraints(v bool) bool {
 
 		qt := NewType()
 		qt.Name= e.Name + "Query"
+		qt.Tag, _ = core.MakeTag("query: {" + e.QueryTags + "}")
 		qt.Fields = e.Fields
 		g.queries[qt.Name] = qt
 		g.EntitesByQueries[qt] = append(g.EntitesByQueries[qt], e)

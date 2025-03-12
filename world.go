@@ -14,6 +14,14 @@ type World struct {
 
 var _ WorldI = (*World)(nil)
 
+func (w *World) Defer() {
+	for _, s := range slices.Backward(w.Systems) {
+		s.Defer()
+	}
+
+	w.Systems = nil
+}
+
 func (w *World) AddSystem(system System) {
 	w.Systems = append(w.Systems, system)
 }

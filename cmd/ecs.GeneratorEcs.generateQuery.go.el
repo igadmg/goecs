@@ -84,23 +84,26 @@ func Do<?= q.Name ?>() iter.Seq[<?= q.Name ?>] {
 ?>
 	}
 }
+<?
+	if qt, ok := q.Tag.GetObject(Tag_Query); ok && qt.HasField(Tag_Cached) {
+?>
 
-type <?= q.Name ?>Result struct {
+type <?= q.Name ?>Cache struct {
 	Age    uint64
-	Result []<?= q.Name ?>
+	Cache []<?= q.Name ?>
 }
 
-func (r *<?= q.Name ?>Result) Query() bool {
+func (r *<?= q.Name ?>Cache) Query() bool {
 	if r.Age != Age<?= q.Name ?>() {
 		r.Age = Age<?= q.Name ?>()
-		r.Result = slices.Collect(Do<?= q.Name ?>())
+		r.Cache = slices.Collect(Do<?= q.Name ?>())
 
 		return true
 	}
 
 	return false
 }
-
 <?
+	}
 }
 ?>
