@@ -117,15 +117,20 @@ func (r *Ref[T]) Defer() {
 }
 
 func (r *Ref[T]) Store() {
+	if r.IsNull() {
+		return
+	}
+
 	if r.Id.IsStored() {
 		return
 	}
 
+	r.Get()
 	func(t any) {
 		if si, ok := t.(IsStorable); ok {
 			si.Store()
 		}
-	}(r.Get()) // this Loads Ptr which is saved.
+	}(&r.Ptr)
 
 	r.Id = r.Id.Store()
 	r.Defer()
@@ -143,7 +148,7 @@ func (r *Ref[T]) Restore() {
 		if si, ok := t.(IsStorable); ok {
 			si.Restore()
 		}
-	}(r.Ptr)
+	}(&r.Ptr)
 
 	r.Id = r.Id.Restore()
 }
