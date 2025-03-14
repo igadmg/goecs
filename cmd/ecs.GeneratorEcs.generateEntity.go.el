@@ -43,7 +43,11 @@ func Match<?= e.Name ?>(id ecs.Id) (ecs.Ref[<?= e.Name ?>], bool) {
 }
 
 func (e <?= e.Name ?>) Ref() ecs.Ref[<?= e.Name ?>] {
-	return ecs.Ref[<?= e.Name ?>] { Id: e.Id }
+	return ecs.Ref[<?= e.Name ?>] {
+		Id: e.Id,
+		Age: s_<?= e.Name ?>.Age,
+		Ptr: e,
+	}
 }
 
 func (e *<?= e.Name ?>) Allocate() ecs.Ref[<?= e.Name ?>] {
