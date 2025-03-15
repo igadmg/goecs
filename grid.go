@@ -40,7 +40,7 @@ func (g Grid[T]) CellsSeq() iter.Seq[T] {
 }
 
 func (g Grid[T]) Cell(xy vector2.Int) T {
-	id := g.Start.Id.SetId(g.Start.Id.GetId() + uint64(g.Size.X()*xy.Y()+xy.X())).Allocate()
+	id := g.Start.Id.SetId(g.Start.Id.GetId() + uint64(g.Size.X*xy.Y+xy.X)).Allocate()
 	_, t := GetT[T](id)
 	return t
 }
@@ -100,22 +100,22 @@ func (g CellGrid[T]) IsValid(xy vector2.Int) bool {
 
 func (g CellGrid[T]) XY(i int) vector2.Int {
 	return vector2.New(
-		i%g.size.X(),
-		i/g.size.X(),
+		i%g.size.X,
+		i/g.size.X,
 	)
 }
 
 func (g CellGrid[T]) Tile(xy vector2.Int) T {
-	return g.Cells[g.size.X()*(xy.Y()+1)+(xy.X()+1)]
+	return g.Cells[g.size.X*(xy.Y+1)+(xy.X+1)]
 }
 
 func (g CellGrid[T]) SetTile(xy vector2.Int, v T) {
-	g.Cells[g.size.X()*(xy.Y()+1)+(xy.X()+1)] = v
+	g.Cells[g.size.X*(xy.Y+1)+(xy.X+1)] = v
 }
 
 func (g CellGrid[T]) TileClamped(xy vector2.Int) T {
 	xy = xy.AddXY(1, 1).Clamp0V(g.size.AddXY(-1, -1))
-	return g.Cells[g.size.X()*(xy.Y())+(xy.X())]
+	return g.Cells[g.size.X*(xy.Y)+(xy.X)]
 }
 
 func (g *CellGrid[T]) CellGridRegion(xy vector2.Int) CellGridRegion[T] {
