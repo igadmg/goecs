@@ -21,7 +21,7 @@ func Age<?= q.Name ?>() (age uint64) {
 <?
 	for _, e := range es {
 ?>
-	age += s_<?= e.Name ?>.Age
+	age += s_<?= e.Name ?>.Age()
 <?
 	}
 ?>
@@ -36,7 +36,7 @@ func Get<?= q.Name ?>(id ecs.Id) (<?= q.Name ?>, bool) {
 <?
 	for  _, e := range es {
 ?>
-	if s := &s_<?= e.Name ?>; s.TypeId == t {
+	if s := &s_<?= e.Name ?>; s.TypeId() == t {
 		return <?= q.Name ?>{
 			Id:      id,
 <?

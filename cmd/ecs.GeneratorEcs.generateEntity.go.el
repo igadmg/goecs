@@ -28,16 +28,28 @@ type storage_<?= e.Name ?> struct {
 }
 
 var s_<?= e.Name ?> = storage_<?= e.Name ?>{
-	BaseStorage: ecs.BaseStorage{TypeId: <?= id  ?>},
+	BaseStorage: ecs.MakeBaseStorage(<?= id  ?>),
 }
 
 func Match<?= e.Name ?>(id ecs.Id) (ecs.Ref[<?= e.Name ?>], bool) {
-	if id.GetType() == s_<?= e.Name ?>.TypeId {
+	if id.GetType() == s_<?= e.Name ?>.TypeId() {
 		ref := ecs.Ref[<?= e.Name ?>]{Id: id}
 		_ = ref.Get()
 
 		return ref, true
 	}
+<?
+	for s := range EnumTypes(e.Subclasses) {
+?>
+	if id.GetType() == s_<?= s.Name ?>.TypeId() {
+		ref := ecs.Ref[<?= e.Name ?>]{Id: id}
+		_ = ref.Get()
+
+		return ref, true
+	}
+<?
+	}
+?>
 
 	return ecs.Ref[<?= e.Name ?>]{}, false
 }
@@ -45,7 +57,7 @@ func Match<?= e.Name ?>(id ecs.Id) (ecs.Ref[<?= e.Name ?>], bool) {
 func (e <?= e.Name ?>) Ref() ecs.Ref[<?= e.Name ?>] {
 	return ecs.Ref[<?= e.Name ?>] {
 		Id: e.Id,
-		Age: s_<?= e.Name ?>.Age,
+		Age: s_<?= e.Name ?>.Age(),
 		Ptr: e,
 	}
 }
@@ -107,8 +119,8 @@ func (e <?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, <?= e.Name ?>) {
 		switch sc := s.(type) {
 		case *Type:
 ?>
-	if s := &s_<?= sc.Name ?>; s.TypeId == tid {
-		if age != s.Age {
+	if s := &s_<?= sc.Name ?>; s.TypeId() == tid {
+		if age != s.Age() {
 			e.Id = id
 <?
 			for field := range EnumFields(e.Fields) {
@@ -128,7 +140,7 @@ func (e <?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, <?= e.Name ?>) {
 <?
 			}
 ?>
-			age = s.Age
+			age = s.Age()
 		}
 
 		return age, e
@@ -137,8 +149,8 @@ func (e <?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, <?= e.Name ?>) {
 		}
 	}
 ?>
-	if s := s_<?= e.Name ?>; s.TypeId == tid {
-		if age != s.Age {
+	if s := s_<?= e.Name ?>; s.TypeId() == tid {
+		if age != s.Age() {
 			e.Id = id
 <?
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
@@ -152,7 +164,7 @@ func (e <?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, <?= e.Name ?>) {
 <?
 	}
 ?>
-			age = s.Age
+			age = s.Age()
 		}
 
 		return age, e
@@ -191,7 +203,7 @@ func Free<?= e.Name ?>(id ecs.Id) {
 
 func Update<?= e.Name ?>Id(id ecs.Id) {
 	tid := id.GetType()
-	if s := s_<?= e.Name ?>; s.TypeId == tid {
+	if s := s_<?= e.Name ?>; s.TypeId() == tid {
 		index := (int)(id.GetId() - 1)
 
 		s_<?= e.Name ?>.Ids[index] = id

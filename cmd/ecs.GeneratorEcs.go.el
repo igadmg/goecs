@@ -16,6 +16,7 @@ func (g *GeneratorEcs) generate(wr io.Writer, pkg string) {
 package <?= pkg ?>
 
 import (
+	"iter"
 	"slices"
 
 	ecs "github.com/igadmg/goecs"

@@ -9,10 +9,24 @@ import (
 type BaseStorage struct {
 	id      uint64
 	id_pool []Id
-	TypeId  uint32
-	Age     uint64
+	typeId  uint32
+	age     uint64
 
 	Ids []Id
+}
+
+func MakeBaseStorage(typeId uint32) BaseStorage {
+	return BaseStorage{
+		typeId: typeId,
+	}
+}
+
+func (s *BaseStorage) TypeId() uint32 {
+	return s.typeId
+}
+
+func (s *BaseStorage) Age() uint64 {
+	return s.age
 }
 
 func (s *BaseStorage) EntityIds() iter.Seq[Id] {
@@ -31,7 +45,7 @@ func (s *BaseStorage) NewId() (id Id) {
 	l := len(s.id_pool)
 	if l == 0 {
 		s.id++
-		id = MakeId(s.id, s.TypeId)
+		id = MakeId(s.id, s.typeId)
 	} else {
 		id = s.id_pool[l-1]
 		s.id_pool = s.id_pool[:l-1]
@@ -47,7 +61,7 @@ func (s *BaseStorage) NewId() (id Id) {
 
 func (s *BaseStorage) NewGridId() (id Id) {
 	s.id++
-	id = MakeId(s.id, s.TypeId)
+	id = MakeId(s.id, s.typeId)
 
 	// init
 	id = id.
@@ -64,17 +78,17 @@ func (s *BaseStorage) AllocateId() (age uint64, id Id) {
 	//glen := min(index, len(s.Ids))
 	//grow := index + min(1, glen/5)
 
-	s.Age++
+	s.age++
 	s.Ids = slicesex.Reserve(s.Ids, index+1)
 	s.Ids[index] = id
 
-	age = s.Age
+	age = s.age
 	return
 }
 
 func (s *BaseStorage) AllocateGridIds(size int) (age uint64, start_id Id) {
 	si := len(s.Ids)
-	s.Age++
+	s.age++
 	s.Ids = slicesex.Reserve(s.Ids, len(s.Ids)+size+1)
 
 	for i := range size {
@@ -83,7 +97,7 @@ func (s *BaseStorage) AllocateGridIds(size int) (age uint64, start_id Id) {
 	}
 
 	start_id = s.Ids[si]
-	age = s.Age
+	age = s.age
 	return
 	// return age, start_id
 
@@ -110,7 +124,7 @@ func (s *BaseStorage) Free(id Id) Id {
 	}
 
 	id = id.Free()
-	s.Age++
+	s.age++
 	//if !id.IsStored() { // leave stored entities in db
 	s.id_pool = append(s.id_pool, id)
 	//}
