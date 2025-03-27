@@ -54,7 +54,7 @@ func (g *GeneratorEcs) NewType(t core.TypeI, spec *ast.TypeSpec) (core.TypeI, er
 		et.EType = Tag(et.Tag).GetEcsTag()
 
 		switch Tag(et.Tag).GetEcsTag() {
-		case EcsEntity:
+		case EcsArchetype:
 			g.entities[et.Name] = et
 		case EcsFeature:
 			g.features[et.Name] = et

@@ -12,15 +12,19 @@ const (
 	Tag_Query     = "query"
 	Tag_System    = "system"
 
-	Tag_Reference = "reference" // fields marked as reference are not calling Prepare, Defer, Store/Restore methods but are saved
-	Tag_Transient = "transient" // fields marked as transient are not Store()'d or Restore()'d nor saved to file
+	// Archetype tags
+	Tag_Grid = "grid" // if archetype is marked as grid it's storage provides grid based functionality - special storage for continuous block i.e. for grid maps
 
-	Tag_Cached = "cached" // queries marked as cached get *Cached structs generated
-)
-
-const (
+	Tag_Extends  = "extends"  // if archetype have extends flag it designates what archetypes are extended by that one
 	Tag_Abstract = "abstract" // field is abstract - it does not have it's own storage but can be overrided by subarchetypes
 	Tag_Virtual  = "virtual"  // field is virtual - it does have it's own storage and can be overrided by subarchetypes
+
+	// Query and Archetype
+	Tag_Cached = "cached" // queries or archetypes marked as cached get *Cached structs generated
+
+	// Component tags
+	Tag_Reference = "reference" // fields marked as reference are not calling Prepare, Defer, Store/Restore methods but are saved
+	Tag_Transient = "transient" // fields marked as transient are not Store()'d or Restore()'d nor saved to file
 )
 
 const (
@@ -31,7 +35,7 @@ type Tag core.Tag
 
 func (t Tag) GetEcsTag() EcsType {
 	if _, ok := t.Data[Tag_Archetype]; ok {
-		return EcsEntity
+		return EcsArchetype
 	}
 	if _, ok := t.Data[Tag_Feature]; ok {
 		return EcsFeature

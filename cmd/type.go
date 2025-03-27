@@ -15,7 +15,7 @@ type EcsType int
 
 const (
 	EcsTypeInvalid EcsType = iota
-	EcsEntity
+	EcsArchetype
 	EcsFeature
 	EcsComponent
 	EcsQuery
@@ -201,7 +201,7 @@ func (t Type) ReversedStructComponentsSeq() iter.Seq[EcsFieldI] {
 			lcm[field.GetName()] = field
 		}
 
-		bases := slices.Clone(t.Bases)
+		bases := slices.Clone(t.BaseFields)
 		slices.Reverse(bases)
 		for _, base := range bases {
 			if bt, ok := base.GetType().(EcsTypeI); ok {
@@ -259,7 +259,7 @@ func (t Type) ReversedQueryComponentsSeq() iter.Seq[EcsFieldI] {
 			lcm[field.GetName()] = field
 		}
 
-		bases := slices.Clone(t.Bases)
+		bases := slices.Clone(t.BaseFields)
 		slices.Reverse(bases)
 		for _, base := range bases {
 			if bt, ok := base.GetType().(EcsTypeI); ok {
@@ -316,7 +316,7 @@ type ComponentOverride struct {
 
 func (t Type) ComponentOverridesSeq() iter.Seq[ComponentOverride] {
 	return func(yield func(ComponentOverride) bool) {
-		for base := range EnumFields(t.Bases) {
+		for base := range EnumFields(t.BaseFields) {
 			be, ok := CastType(base.Type)
 			if !ok {
 				continue
@@ -360,7 +360,7 @@ func (t *Type) StoreComponentsSeq() iter.Seq[EcsFieldI] {
 				//	continue
 				//}
 
-				//if t.Etype != EcsEntity && !field.IsComponent {
+				//if t.Etype != EcsArchetype  && !field.IsComponent {
 				//	continue
 				//}
 
@@ -398,7 +398,7 @@ func (t *Type) Prepare(tf core.TypeFactory) error {
 		return err
 	}
 
-	for _, base := range t.Bases {
+	for _, base := range t.BaseFields {
 		if strings.HasPrefix(base.GetTypeName(), "ecs.Entity") {
 			t.HaveBaseEntity = true
 			break
@@ -410,6 +410,14 @@ func (t *Type) Prepare(tf core.TypeFactory) error {
 		if et, ok := Tag(t.Tag).GetEcs(); ok {
 			if et.HasField(Tag_Cached) {
 				t.QueryTags = Tag_Cached
+			}
+
+			if t.EType == EcsArchetype {
+				if ef, ok := et.GetField(Tag_Extends); ok {
+					if et, ok := tf.GetType(ef); ok {
+						t.Extends = append(t.Extends, et)
+					}
+				}
 			}
 		}
 	}
