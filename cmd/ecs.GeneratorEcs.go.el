@@ -21,7 +21,7 @@ import (
 
 	ecs "github.com/igadmg/goecs"
 	"github.com/igadmg/goex/slicesex"
-	"github.com/igadmg/raylib-go/raymath/vector2"
+	"github.com/igadmg/gamemath/vector2"
 )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

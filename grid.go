@@ -3,7 +3,7 @@ package ecs
 import (
 	"iter"
 
-	"github.com/igadmg/raylib-go/raymath/vector2"
+	"github.com/igadmg/gamemath/vector2"
 )
 
 type Grid[T IsLoadable[T]] struct {

@@ -8,7 +8,7 @@ replace (
 	github.com/igadmg/goel => ../../cmd/goel
 	github.com/igadmg/goex => ../../pkg/goex
 	github.com/igadmg/gogen => ../../pkg/gogen
-	github.com/igadmg/raylib-go/raymath => ../../pkg/raylib-go/raymath
+	github.com/igadmg/gamemath => ../../pkg/gamemath
 )
 
 require (
@@ -16,7 +16,7 @@ require (
 	github.com/hymkor/go-lazy v0.5.0
 	github.com/igadmg/goex v0.0.0-20250321131421-ccb743b21181
 	github.com/igadmg/gogen v0.0.0-20250318100828-211ca23c6b9f
-	github.com/igadmg/raylib-go/raymath v0.0.0-00010101000000-000000000000
+	github.com/igadmg/gamemath v0.0.0-00010101000000-000000000000
 	gopkg.in/yaml.v3 v3.0.1
 )
 
