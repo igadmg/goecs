@@ -6,7 +6,7 @@ import (
 	"io"
 )
 
-func (g *GeneratorEcs) generateEntity(wr io.Writer, id int, e *Type) {
+func (g *GeneratorEcs) generateArchetype(wr io.Writer, id int, e *Type) {
 	g.genAs(wr, e)
 
 ?>

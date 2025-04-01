@@ -64,7 +64,7 @@ func _Entity_constraints(v bool) bool {
 //////////
 // <?= e.Name ?>
 <?
-		g.generateEntity(wr, i+1, e)
+		g.generateArchetype(wr, i+1, e)
 
 		qt := NewType()
 		qt.Name= e.Name + "Query"
