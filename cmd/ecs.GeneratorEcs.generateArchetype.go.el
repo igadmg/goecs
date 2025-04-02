@@ -109,70 +109,8 @@ func (e *<?= e.Name ?>) Free() {
 	Free<?= e.Name ?>(e.Id)
 }
 
-func (e <?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, <?= e.Name ?>) {
-	index := (int)(id.GetId() - 1)
-	tid := id.GetType()
-	_ = index
-
 <?
- 	for _, s := range e.Subclasses {
-		switch sc := s.(type) {
-		case *Type:
-?>
-	if s := &s_<?= sc.Name ?>; s.TypeId() == tid {
-		if age != s.Age() {
-			e.Id = id
-<?
-			for field := range EnumFields(e.Fields) {
-				if field.Tag.HasField(Tag_Virtual) || field.Tag.HasField(Tag_Abstract) {
-?>
-			e.<?= field.Name ?> = &s.s_<?= field.Name ?>[index].<?= field.GetTypeName() ?>
-<?
-				} else {
-?>
-			e.<?= field.Name ?> = &s.s_<?= field.Name ?>[index]
-<?
-				}
-			}
-			for c := range e.ComponentOverridesSeq() {
-?>
-			e.<?= c.Base.Name ?>.<?= c.Field.Name ?> = &e.<?= c.Field.Name ?>.<?= c.Field.GetTypeName() ?>
-<?
-			}
-?>
-			age = s.Age()
-		}
-
-		return age, e
-	}
-<?
-		}
-	}
-?>
-	if s := s_<?= e.Name ?>; s.TypeId() == tid {
-		if age != s.Age() {
-			e.Id = id
-<?
-	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
-?>
-			e.<?= c.Name ?> = &s.s_<?= c.Name ?>[index]
-<?
- 	}
-	for c := range e.ComponentOverridesSeq() {
-?>
-			e.<?= c.Base.Name ?>.<?= c.Field.Name ?> = &e.<?= c.Field.Name ?>.<?= c.Field.GetTypeName() ?>
-<?
-	}
-?>
-			age = s.Age()
-		}
-
-		return age, e
-	}
-
-	panic("Wrong type requested.")
-}
-<?
+	g.fnLoad(wr, e)
 	if !e.IsTransient() {
 		g.fnStore(wr, e)
 		g.fnRestore(wr, e)
@@ -257,6 +195,77 @@ func (g *GeneratorEcs) genFieldEcsCall(wr io.Writer, f *Field, call string) {
 <?
 		}
 	}
+}
+
+func (g *GeneratorEcs) fnLoad(wr io.Writer, e *Type) {
+	if e.HasFunction("Load") {
+		return
+	}
+?>
+func (e <?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, <?= e.Name ?>) {
+	index := (int)(id.GetId() - 1)
+	tid := id.GetType()
+	_ = index
+
+<?
+ 	for _, s := range e.Subclasses {
+		switch sc := s.(type) {
+		case *Type:
+?>
+	if s := &s_<?= sc.Name ?>; s.TypeId() == tid {
+		if age != s.Age() {
+			e.Id = id
+<?
+			for field := range EnumFields(e.Fields) {
+				if field.Tag.HasField(Tag_Virtual) || field.Tag.HasField(Tag_Abstract) {
+?>
+			e.<?= field.Name ?> = &s.s_<?= field.Name ?>[index].<?= field.GetTypeName() ?>
+<?
+				} else {
+?>
+			e.<?= field.Name ?> = &s.s_<?= field.Name ?>[index]
+<?
+				}
+			}
+			for c := range e.ComponentOverridesSeq() {
+?>
+			e.<?= c.Base.Name ?>.<?= c.Field.Name ?> = &e.<?= c.Field.Name ?>.<?= c.Field.GetTypeName() ?>
+<?
+			}
+?>
+			age = s.Age()
+		}
+
+		return age, e
+	}
+<?
+		}
+	}
+?>
+	if s := s_<?= e.Name ?>; s.TypeId() == tid {
+		if age != s.Age() {
+			e.Id = id
+<?
+	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
+?>
+			e.<?= c.Name ?> = &s.s_<?= c.Name ?>[index]
+<?
+ 	}
+	for c := range e.ComponentOverridesSeq() {
+?>
+			e.<?= c.Base.Name ?>.<?= c.Field.Name ?> = &e.<?= c.Field.Name ?>.<?= c.Field.GetTypeName() ?>
+<?
+	}
+?>
+			age = s.Age()
+		}
+
+		return age, e
+	}
+
+	panic("Wrong type requested.")
+}
+<?
 }
 
 func (g *GeneratorEcs) fnStore(wr io.Writer, typ *Type) {

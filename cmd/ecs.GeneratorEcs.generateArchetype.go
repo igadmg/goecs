@@ -174,118 +174,9 @@ func (e *`))
 	wr.Write([]byte(`(e.Id)
 }
 
-func (e `))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
-	wr.Write([]byte(`) Load(age uint64, id ecs.Id) (uint64, `))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
-	wr.Write([]byte(`) {
-	index := (int)(id.GetId() - 1)
-	tid := id.GetType()
-	_ = index
-
 `))
 
-	for _, s := range e.Subclasses {
-		switch sc := s.(type) {
-		case *Type:
-
-			wr.Write([]byte(`	if s := &s_`))
-			wr.Write([]byte(fmt.Sprintf("%v", sc.Name)))
-			wr.Write([]byte(`; s.TypeId() == tid {
-		if age != s.Age() {
-			e.Id = id
-`))
-
-			for field := range EnumFields(e.Fields) {
-				if field.Tag.HasField(Tag_Virtual) || field.Tag.HasField(Tag_Abstract) {
-
-					wr.Write([]byte(`			e.`))
-					wr.Write([]byte(fmt.Sprintf("%v", field.Name)))
-					wr.Write([]byte(` = &s.s_`))
-					wr.Write([]byte(fmt.Sprintf("%v", field.Name)))
-					wr.Write([]byte(`[index].`))
-					wr.Write([]byte(fmt.Sprintf("%v", field.GetTypeName())))
-					wr.Write([]byte(`
-`))
-
-				} else {
-
-					wr.Write([]byte(`			e.`))
-					wr.Write([]byte(fmt.Sprintf("%v", field.Name)))
-					wr.Write([]byte(` = &s.s_`))
-					wr.Write([]byte(fmt.Sprintf("%v", field.Name)))
-					wr.Write([]byte(`[index]
-`))
-
-				}
-			}
-			for c := range e.ComponentOverridesSeq() {
-
-				wr.Write([]byte(`			e.`))
-				wr.Write([]byte(fmt.Sprintf("%v", c.Base.Name)))
-				wr.Write([]byte(`.`))
-				wr.Write([]byte(fmt.Sprintf("%v", c.Field.Name)))
-				wr.Write([]byte(` = &e.`))
-				wr.Write([]byte(fmt.Sprintf("%v", c.Field.Name)))
-				wr.Write([]byte(`.`))
-				wr.Write([]byte(fmt.Sprintf("%v", c.Field.GetTypeName())))
-				wr.Write([]byte(`
-`))
-
-			}
-
-			wr.Write([]byte(`			age = s.Age()
-		}
-
-		return age, e
-	}
-`))
-
-		}
-	}
-
-	wr.Write([]byte(`	if s := s_`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
-	wr.Write([]byte(`; s.TypeId() == tid {
-		if age != s.Age() {
-			e.Id = id
-`))
-
-	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
-
-		wr.Write([]byte(`			e.`))
-		wr.Write([]byte(fmt.Sprintf("%v", c.Name)))
-		wr.Write([]byte(` = &s.s_`))
-		wr.Write([]byte(fmt.Sprintf("%v", c.Name)))
-		wr.Write([]byte(`[index]
-`))
-
-	}
-	for c := range e.ComponentOverridesSeq() {
-
-		wr.Write([]byte(`			e.`))
-		wr.Write([]byte(fmt.Sprintf("%v", c.Base.Name)))
-		wr.Write([]byte(`.`))
-		wr.Write([]byte(fmt.Sprintf("%v", c.Field.Name)))
-		wr.Write([]byte(` = &e.`))
-		wr.Write([]byte(fmt.Sprintf("%v", c.Field.Name)))
-		wr.Write([]byte(`.`))
-		wr.Write([]byte(fmt.Sprintf("%v", c.Field.GetTypeName())))
-		wr.Write([]byte(`
-`))
-
-	}
-
-	wr.Write([]byte(`			age = s.Age()
-		}
-
-		return age, e
-	}
-
-	panic("Wrong type requested.")
-}
-`))
-
+	g.fnLoad(wr, e)
 	if !e.IsTransient() {
 		g.fnStore(wr, e)
 		g.fnRestore(wr, e)
@@ -431,6 +322,125 @@ func (g *GeneratorEcs) genFieldEcsCall(wr io.Writer, f *Field, call string) {
 
 		}
 	}
+}
+
+func (g *GeneratorEcs) fnLoad(wr io.Writer, e *Type) {
+	if e.HasFunction("Load") {
+		return
+	}
+
+	wr.Write([]byte(`func (e `))
+	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(`) Load(age uint64, id ecs.Id) (uint64, `))
+	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(`) {
+	index := (int)(id.GetId() - 1)
+	tid := id.GetType()
+	_ = index
+
+`))
+
+	for _, s := range e.Subclasses {
+		switch sc := s.(type) {
+		case *Type:
+
+			wr.Write([]byte(`	if s := &s_`))
+			wr.Write([]byte(fmt.Sprintf("%v", sc.Name)))
+			wr.Write([]byte(`; s.TypeId() == tid {
+		if age != s.Age() {
+			e.Id = id
+`))
+
+			for field := range EnumFields(e.Fields) {
+				if field.Tag.HasField(Tag_Virtual) || field.Tag.HasField(Tag_Abstract) {
+
+					wr.Write([]byte(`			e.`))
+					wr.Write([]byte(fmt.Sprintf("%v", field.Name)))
+					wr.Write([]byte(` = &s.s_`))
+					wr.Write([]byte(fmt.Sprintf("%v", field.Name)))
+					wr.Write([]byte(`[index].`))
+					wr.Write([]byte(fmt.Sprintf("%v", field.GetTypeName())))
+					wr.Write([]byte(`
+`))
+
+				} else {
+
+					wr.Write([]byte(`			e.`))
+					wr.Write([]byte(fmt.Sprintf("%v", field.Name)))
+					wr.Write([]byte(` = &s.s_`))
+					wr.Write([]byte(fmt.Sprintf("%v", field.Name)))
+					wr.Write([]byte(`[index]
+`))
+
+				}
+			}
+			for c := range e.ComponentOverridesSeq() {
+
+				wr.Write([]byte(`			e.`))
+				wr.Write([]byte(fmt.Sprintf("%v", c.Base.Name)))
+				wr.Write([]byte(`.`))
+				wr.Write([]byte(fmt.Sprintf("%v", c.Field.Name)))
+				wr.Write([]byte(` = &e.`))
+				wr.Write([]byte(fmt.Sprintf("%v", c.Field.Name)))
+				wr.Write([]byte(`.`))
+				wr.Write([]byte(fmt.Sprintf("%v", c.Field.GetTypeName())))
+				wr.Write([]byte(`
+`))
+
+			}
+
+			wr.Write([]byte(`			age = s.Age()
+		}
+
+		return age, e
+	}
+`))
+
+		}
+	}
+
+	wr.Write([]byte(`	if s := s_`))
+	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(`; s.TypeId() == tid {
+		if age != s.Age() {
+			e.Id = id
+`))
+
+	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
+
+		wr.Write([]byte(`			e.`))
+		wr.Write([]byte(fmt.Sprintf("%v", c.Name)))
+		wr.Write([]byte(` = &s.s_`))
+		wr.Write([]byte(fmt.Sprintf("%v", c.Name)))
+		wr.Write([]byte(`[index]
+`))
+
+	}
+	for c := range e.ComponentOverridesSeq() {
+
+		wr.Write([]byte(`			e.`))
+		wr.Write([]byte(fmt.Sprintf("%v", c.Base.Name)))
+		wr.Write([]byte(`.`))
+		wr.Write([]byte(fmt.Sprintf("%v", c.Field.Name)))
+		wr.Write([]byte(` = &e.`))
+		wr.Write([]byte(fmt.Sprintf("%v", c.Field.Name)))
+		wr.Write([]byte(`.`))
+		wr.Write([]byte(fmt.Sprintf("%v", c.Field.GetTypeName())))
+		wr.Write([]byte(`
+`))
+
+	}
+
+	wr.Write([]byte(`			age = s.Age()
+		}
+
+		return age, e
+	}
+
+	panic("Wrong type requested.")
+}
+`))
+
 }
 
 func (g *GeneratorEcs) fnStore(wr io.Writer, typ *Type) {
