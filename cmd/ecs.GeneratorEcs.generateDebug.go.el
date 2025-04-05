@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"io"
 	"maps"
-
-	"github.com/igadmg/gogen/core"
 )
 
-func (g *GeneratorEcs) generateDebug(wr io.Writer, pkg *core.Package) {
+func (g *GeneratorEcs) generateDebug(wr io.Writer) {
 ?>
 type EcsDebugInfo struct {
 	EntitiesCount int64
@@ -39,7 +37,7 @@ func GetEcsDebugInfo() EcsDebugInfo {
 
 <?
 	for e := range maps.Values(g.entities) {
-		if e.GetPackage() != pkg {
+		if e.GetPackage() != g.Pkg {
 			continue
 		}
 

@@ -100,16 +100,19 @@ func (t Type) NeedAs() bool {
 	return t.needAs.Value()
 }
 
-func MakeType() Type {
+func MakeType(pkg *core.Package) Type {
 	return Type{
 		Type: core.Type{
+			Token: core.Token{
+				Package: pkg,
+			},
 			Funcs: map[string]core.FuncI{},
 		},
 	}
 }
 
-func NewType() *Type {
-	t := MakeType()
+func NewType(pkg *core.Package) *Type {
+	t := MakeType(pkg)
 	return t.New()
 }
 

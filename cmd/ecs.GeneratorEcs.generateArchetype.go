@@ -32,7 +32,7 @@ type storage_`))
 		wr.Write([]byte(`	S_`))
 		wr.Write([]byte(fmt.Sprintf("%v", c.Name)))
 		wr.Write([]byte(` []`))
-		wr.Write([]byte(fmt.Sprintf("%v", c.GetTypeName())))
+		wr.Write([]byte(fmt.Sprintf("%v", g.LocalTypeName(c.GetType()))))
 		wr.Write([]byte(`
 `))
 
@@ -215,7 +215,7 @@ func Free`))
 		wr.Write([]byte(`	s.S_`))
 		wr.Write([]byte(fmt.Sprintf("%v", c.Name)))
 		wr.Write([]byte(`[index] = `))
-		wr.Write([]byte(fmt.Sprintf("%v", c.GetTypeName())))
+		wr.Write([]byte(fmt.Sprintf("%v", g.LocalTypeName(c.GetType()))))
 		wr.Write([]byte(`{}
 `))
 
@@ -245,7 +245,7 @@ func Update`))
 
 		wr.Write([]byte(`
 // Auto-generated query for `))
-		wr.Write([]byte(fmt.Sprintf("%v", eName)))
+		wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
 		wr.Write([]byte(` entity
 type `))
 		wr.Write([]byte(fmt.Sprintf("%v", eName)))
@@ -262,7 +262,7 @@ type `))
 			wr.Write([]byte(`	`))
 			wr.Write([]byte(fmt.Sprintf("%v", c.Name)))
 			wr.Write([]byte(` *`))
-			wr.Write([]byte(fmt.Sprintf("%v", c.GetTypeName())))
+			wr.Write([]byte(fmt.Sprintf("%v", g.LocalTypeName(c.GetType()))))
 			wr.Write([]byte(`
 `))
 

@@ -22,7 +22,7 @@ type storage_<?= eName ?> struct {
 <?
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
 ?>
-	S_<?= c.Name ?> []<?= c.GetTypeName() ?>
+	S_<?= c.Name ?> []<?= g.LocalTypeName(c.GetType()) ?>
 <?
 	}
 ?>
@@ -132,7 +132,7 @@ func Free<?= eName ?>(id ecs.Id) {
 <?
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
 ?>
-	s.S_<?= c.Name ?>[index] = <?= c.GetTypeName() ?>{}
+	s.S_<?= c.Name ?>[index] = <?= g.LocalTypeName(c.GetType()) ?>{}
 <?
  	}
 ?>
@@ -152,7 +152,7 @@ func Update<?= eName ?>Id(id ecs.Id) {
 	if _, ok := g.queries[eName+"Query"]; !ok {
 ?>
 
-// Auto-generated query for <?= eName ?> entity
+// Auto-generated query for <?= e.Name ?> entity
 type <?= eName ?>Query struct {
 	_ ecs.MetaTag `ecs:"query: {<?= e.QueryTags ?>}"`
 
@@ -161,7 +161,7 @@ type <?= eName ?>Query struct {
 	for c := range EnumFieldsSeq(e.QueryComponentsSeq()) {
 
 ?>
-	<?= c.Name ?> *<?= c.GetTypeName() ?>
+	<?= c.Name ?> *<?= g.LocalTypeName(c.GetType()) ?>
 <?
 	}
 ?>

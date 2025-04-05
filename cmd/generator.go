@@ -37,7 +37,7 @@ func NewGeneratorEcs() core.Generator {
 
 func (g *GeneratorEcs) NewType(t core.TypeI, spec *ast.TypeSpec) (core.TypeI, error) {
 	if t == nil {
-		t = NewType()
+		t = NewType(g.Pkg)
 	}
 
 	switch et := t.(type) {
@@ -156,6 +156,7 @@ func (g *GeneratorEcs) Prepare() {
 
 func (g *GeneratorEcs) Generate(pkg *core.Package) bytes.Buffer {
 	source := bytes.Buffer{}
-	g.generate(&source, pkg)
+	g.Pkg = pkg
+	g.generate(&source)
 	return source
 }
