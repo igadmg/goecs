@@ -27,7 +27,7 @@ type storage_`))
 
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
 
-		wr.Write([]byte(`	s_`))
+		wr.Write([]byte(`	S_`))
 		wr.Write([]byte(fmt.Sprintf("%v", c.Name)))
 		wr.Write([]byte(` []`))
 		wr.Write([]byte(fmt.Sprintf("%v", c.GetTypeName())))
@@ -38,7 +38,7 @@ type storage_`))
 
 	wr.Write([]byte(`}
 
-var s_`))
+var S_`))
 	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
 	wr.Write([]byte(` = storage_`))
 	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
@@ -53,7 +53,7 @@ func Match`))
 	wr.Write([]byte(`(id ecs.Id) (ecs.Ref[`))
 	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
 	wr.Write([]byte(`], bool) {
-	if id.GetType() == s_`))
+	if id.GetType() == S_`))
 	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
 	wr.Write([]byte(`.TypeId() {
 		ref := ecs.Ref[`))
@@ -67,7 +67,7 @@ func Match`))
 
 	for s := range EnumTypes(e.Subclasses) {
 
-		wr.Write([]byte(`	if id.GetType() == s_`))
+		wr.Write([]byte(`	if id.GetType() == S_`))
 		wr.Write([]byte(fmt.Sprintf("%v", s.Name)))
 		wr.Write([]byte(`.TypeId() {
 		ref := ecs.Ref[`))
@@ -96,7 +96,7 @@ func (e `))
 	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
 	wr.Write([]byte(`] {
 		Id: e.Id,
-		Age: s_`))
+		Age: S_`))
 	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
 	wr.Write([]byte(`.Age(),
 		Ptr: e,
@@ -108,7 +108,7 @@ func (e *`))
 	wr.Write([]byte(`) Allocate() ecs.Ref[`))
 	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
 	wr.Write([]byte(`] {
-	s := &s_`))
+	s := &S_`))
 	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
 	wr.Write([]byte(`
 	age, id := s.BaseStorage.AllocateId()
@@ -119,9 +119,9 @@ func (e *`))
 
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
 
-		wr.Write([]byte(`	s.s_`))
+		wr.Write([]byte(`	s.S_`))
 		wr.Write([]byte(fmt.Sprintf("%v", c.Name)))
-		wr.Write([]byte(` = slicesex.Reserve(s.s_`))
+		wr.Write([]byte(` = slicesex.Reserve(s.S_`))
 		wr.Write([]byte(fmt.Sprintf("%v", c.Name)))
 		wr.Write([]byte(`, index+1)
 `))
@@ -200,7 +200,7 @@ func Allocate`))
 func Free`))
 	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
 	wr.Write([]byte(`(id ecs.Id) {
-	s := &s_`))
+	s := &S_`))
 	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
 	wr.Write([]byte(`
 	index := (int)(id.GetId() - 1)
@@ -210,7 +210,7 @@ func Free`))
 
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
 
-		wr.Write([]byte(`	s.s_`))
+		wr.Write([]byte(`	s.S_`))
 		wr.Write([]byte(fmt.Sprintf("%v", c.Name)))
 		wr.Write([]byte(`[index] = `))
 		wr.Write([]byte(fmt.Sprintf("%v", c.GetTypeName())))
@@ -227,12 +227,12 @@ func Update`))
 	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
 	wr.Write([]byte(`Id(id ecs.Id) {
 	tid := id.GetType()
-	if s := s_`))
+	if s := S_`))
 	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
 	wr.Write([]byte(`; s.TypeId() == tid {
 		index := (int)(id.GetId() - 1)
 
-		s_`))
+		S_`))
 	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
 	wr.Write([]byte(`.Ids[index] = id
 	}
@@ -344,7 +344,7 @@ func (g *GeneratorEcs) fnLoad(wr io.Writer, e *Type) {
 		switch sc := s.(type) {
 		case *Type:
 
-			wr.Write([]byte(`	if s := &s_`))
+			wr.Write([]byte(`	if s := &S_`))
 			wr.Write([]byte(fmt.Sprintf("%v", sc.Name)))
 			wr.Write([]byte(`; s.TypeId() == tid {
 		if age != s.Age() {
@@ -356,7 +356,7 @@ func (g *GeneratorEcs) fnLoad(wr io.Writer, e *Type) {
 
 					wr.Write([]byte(`			e.`))
 					wr.Write([]byte(fmt.Sprintf("%v", field.Name)))
-					wr.Write([]byte(` = &s.s_`))
+					wr.Write([]byte(` = &s.S_`))
 					wr.Write([]byte(fmt.Sprintf("%v", field.Name)))
 					wr.Write([]byte(`[index].`))
 					wr.Write([]byte(fmt.Sprintf("%v", field.GetTypeName())))
@@ -367,7 +367,7 @@ func (g *GeneratorEcs) fnLoad(wr io.Writer, e *Type) {
 
 					wr.Write([]byte(`			e.`))
 					wr.Write([]byte(fmt.Sprintf("%v", field.Name)))
-					wr.Write([]byte(` = &s.s_`))
+					wr.Write([]byte(` = &s.S_`))
 					wr.Write([]byte(fmt.Sprintf("%v", field.Name)))
 					wr.Write([]byte(`[index]
 `))
@@ -399,7 +399,7 @@ func (g *GeneratorEcs) fnLoad(wr io.Writer, e *Type) {
 		}
 	}
 
-	wr.Write([]byte(`	if s := s_`))
+	wr.Write([]byte(`	if s := S_`))
 	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
 	wr.Write([]byte(`; s.TypeId() == tid {
 		if age != s.Age() {
@@ -410,7 +410,7 @@ func (g *GeneratorEcs) fnLoad(wr io.Writer, e *Type) {
 
 		wr.Write([]byte(`			e.`))
 		wr.Write([]byte(fmt.Sprintf("%v", c.Name)))
-		wr.Write([]byte(` = &s.s_`))
+		wr.Write([]byte(` = &s.S_`))
 		wr.Write([]byte(fmt.Sprintf("%v", c.Name)))
 		wr.Write([]byte(`[index]
 `))

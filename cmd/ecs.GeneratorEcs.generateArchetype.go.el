@@ -21,18 +21,18 @@ type storage_<?= e.Name ?> struct {
 <?
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
 ?>
-	s_<?= c.Name ?> []<?= c.GetTypeName() ?>
+	S_<?= c.Name ?> []<?= c.GetTypeName() ?>
 <?
 	}
 ?>
 }
 
-var s_<?= e.Name ?> = storage_<?= e.Name ?>{
+var S_<?= e.Name ?> = storage_<?= e.Name ?>{
 	BaseStorage: ecs.MakeBaseStorage(<?= id  ?>),
 }
 
 func Match<?= e.Name ?>(id ecs.Id) (ecs.Ref[<?= e.Name ?>], bool) {
-	if id.GetType() == s_<?= e.Name ?>.TypeId() {
+	if id.GetType() == S_<?= e.Name ?>.TypeId() {
 		ref := ecs.Ref[<?= e.Name ?>]{Id: id}
 		_ = ref.Get()
 
@@ -41,7 +41,7 @@ func Match<?= e.Name ?>(id ecs.Id) (ecs.Ref[<?= e.Name ?>], bool) {
 <?
 	for s := range EnumTypes(e.Subclasses) {
 ?>
-	if id.GetType() == s_<?= s.Name ?>.TypeId() {
+	if id.GetType() == S_<?= s.Name ?>.TypeId() {
 		ref := ecs.Ref[<?= e.Name ?>]{Id: id}
 		_ = ref.Get()
 
@@ -57,13 +57,13 @@ func Match<?= e.Name ?>(id ecs.Id) (ecs.Ref[<?= e.Name ?>], bool) {
 func (e <?= e.Name ?>) Ref() ecs.Ref[<?= e.Name ?>] {
 	return ecs.Ref[<?= e.Name ?>] {
 		Id: e.Id,
-		Age: s_<?= e.Name ?>.Age(),
+		Age: S_<?= e.Name ?>.Age(),
 		Ptr: e,
 	}
 }
 
 func (e *<?= e.Name ?>) Allocate() ecs.Ref[<?= e.Name ?>] {
-	s := &s_<?= e.Name ?>
+	s := &S_<?= e.Name ?>
 	age, id := s.BaseStorage.AllocateId()
 	index := (int)(id.GetId() - 1)
 	_ = index
@@ -71,7 +71,7 @@ func (e *<?= e.Name ?>) Allocate() ecs.Ref[<?= e.Name ?>] {
 <?
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
 ?>
-	s.s_<?= c.Name ?> = slicesex.Reserve(s.s_<?= c.Name ?>, index+1)
+	s.S_<?= c.Name ?> = slicesex.Reserve(s.S_<?= c.Name ?>, index+1)
 <?
 	}
 ?>
@@ -124,14 +124,14 @@ func Allocate<?= e.Name ?>() (ref ecs.Ref[<?= e.Name ?>], entity <?= e.Name ?>) 
 }
 
 func Free<?= e.Name ?>(id ecs.Id) {
-	s := &s_<?= e.Name ?>
+	s := &S_<?= e.Name ?>
 	index := (int)(id.GetId() - 1)
 	_ = index
 
 <?
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
 ?>
-	s.s_<?= c.Name ?>[index] = <?= c.GetTypeName() ?>{}
+	s.S_<?= c.Name ?>[index] = <?= c.GetTypeName() ?>{}
 <?
  	}
 ?>
@@ -141,10 +141,10 @@ func Free<?= e.Name ?>(id ecs.Id) {
 
 func Update<?= e.Name ?>Id(id ecs.Id) {
 	tid := id.GetType()
-	if s := s_<?= e.Name ?>; s.TypeId() == tid {
+	if s := S_<?= e.Name ?>; s.TypeId() == tid {
 		index := (int)(id.GetId() - 1)
 
-		s_<?= e.Name ?>.Ids[index] = id
+		S_<?= e.Name ?>.Ids[index] = id
 	}
 }
 <?
@@ -212,18 +212,18 @@ func (e <?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, <?= e.Name ?>) {
 		switch sc := s.(type) {
 		case *Type:
 ?>
-	if s := &s_<?= sc.Name ?>; s.TypeId() == tid {
+	if s := &S_<?= sc.Name ?>; s.TypeId() == tid {
 		if age != s.Age() {
 			e.Id = id
 <?
 			for field := range EnumFields(e.Fields) {
 				if field.Tag.HasField(Tag_Virtual) || field.Tag.HasField(Tag_Abstract) {
 ?>
-			e.<?= field.Name ?> = &s.s_<?= field.Name ?>[index].<?= field.GetTypeName() ?>
+			e.<?= field.Name ?> = &s.S_<?= field.Name ?>[index].<?= field.GetTypeName() ?>
 <?
 				} else {
 ?>
-			e.<?= field.Name ?> = &s.s_<?= field.Name ?>[index]
+			e.<?= field.Name ?> = &s.S_<?= field.Name ?>[index]
 <?
 				}
 			}
@@ -242,13 +242,13 @@ func (e <?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, <?= e.Name ?>) {
 		}
 	}
 ?>
-	if s := s_<?= e.Name ?>; s.TypeId() == tid {
+	if s := S_<?= e.Name ?>; s.TypeId() == tid {
 		if age != s.Age() {
 			e.Id = id
 <?
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
 ?>
-			e.<?= c.Name ?> = &s.s_<?= c.Name ?>[index]
+			e.<?= c.Name ?> = &s.S_<?= c.Name ?>[index]
 <?
  	}
 	for c := range e.ComponentOverridesSeq() {

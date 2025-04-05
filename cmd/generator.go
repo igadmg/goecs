@@ -157,7 +157,7 @@ func (g *GeneratorEcs) Prepare() {
 	}
 }
 
-func (g *GeneratorEcs) Generate(pkg string) bytes.Buffer {
+func (g *GeneratorEcs) Generate(pkg *core.Package) bytes.Buffer {
 	source := bytes.Buffer{}
 	g.generate(&source, pkg)
 	return source

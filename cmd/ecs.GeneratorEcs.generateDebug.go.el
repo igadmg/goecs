@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"io"
 	"maps"
+
+	"github.com/igadmg/gogen/core"
 )
 
-func (g *GeneratorEcs) generateDebug(wr io.Writer) {
+func (g *GeneratorEcs) generateDebug(wr io.Writer, pkg *core.Package) {
 ?>
 type EcsDebugInfo struct {
 	EntitiesCount int64
@@ -37,8 +39,12 @@ func GetEcsDebugInfo() EcsDebugInfo {
 
 <?
 	for e := range maps.Values(g.entities) {
+		if e.GetPackage() != pkg {
+			continue
+		}
+
 ?>
-	c_<?= e.Name ?> := s_<?= e.Name ?>.EntitiesCount()
+	c_<?= e.Name ?> := S_<?= e.Name ?>.EntitiesCount()
 	info.EntitesCountByName["<?= e.Name ?>"] = c_<?= e.Name ?>
 	info.EntitiesCount += c_<?= e.Name ?>
 <?

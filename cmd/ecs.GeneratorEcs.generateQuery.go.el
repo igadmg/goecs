@@ -20,9 +20,15 @@ func Age<?= q.Name ?>() (age uint64) {
 	age = 0
 <?
 	for _, e := range es {
+		if e.GetPackage() == q.GetPackage() {
 ?>
-	age += s_<?= e.Name ?>.Age()
+	age += S_<?= e.Name ?>.Age()
 <?
+		} else {
+?>
+	age += <?= e.GetPackage().Name ?>.S_<?= e.Name ?>.Age()
+<?
+		}
 	}
 ?>
 	return
@@ -35,14 +41,22 @@ func Get<?= q.Name ?>(id ecs.Id) (<?= q.Name ?>, bool) {
 
 <?
 	for  _, e := range es {
+		if e.GetPackage() == q.GetPackage() {
 ?>
-	if s := &s_<?= e.Name ?>; s.TypeId() == t {
+	if s := &S_<?= e.Name ?>; s.TypeId() == t {
+<?
+		} else {
+?>
+	if s := &<?= e.GetPackage().Name ?>.S_<?= e.Name ?>; s.TypeId() == t {
+<?
+		}
+?>
 		return <?= q.Name ?>{
 			Id:      id,
 <?
 		for iq := range EnumFieldsSeq(q.StructComponentsSeq()) {
 ?>
-			<?= iq.Name ?>: &s.s_<?= iq.Name ?>[index],
+			<?= iq.Name ?>: &s.S_<?= iq.Name ?>[index],
 <?
 		}
 ?>
@@ -61,7 +75,17 @@ func Do<?= q.Name ?>() iter.Seq[<?= q.Name ?>] {
 	for  _, e := range es {
 ?>
 {
-	s := &s_<?= e.Name ?>
+<?
+	if e.GetPackage() == q.GetPackage() {
+?>
+	s := &S_<?= e.Name ?>
+<?
+	}else {
+?>
+	s := &<?= e.GetPackage().Name ?>.S_<?= e.Name ?>
+<?
+	}
+?>
 	for id := range s.EntityIds() {
 		index := (int)(id.GetId() - 1)
 		_ = index
@@ -70,7 +94,7 @@ func Do<?= q.Name ?>() iter.Seq[<?= q.Name ?>] {
 <?
 		for iq := range EnumFieldsSeq(q.StructComponentsSeq()) {
 ?>
-			<?= iq.Name ?>: &s.s_<?= iq.Name ?>[index],
+			<?= iq.Name ?>: &s.S_<?= iq.Name ?>[index],
 <?
 		}
 ?>
