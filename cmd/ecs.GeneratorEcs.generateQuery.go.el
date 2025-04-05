@@ -17,7 +17,10 @@ func _<?= q.Name ?>_constraints() {
 	var _ ecs.Id = <?= q.Name ?>{}.Id
 }
 
-func Age<?= q.Name ?>() (age uint64) {
+type <?= q.Name ?>Type struct {
+}
+
+func (<?= q.Name ?>Type) Age() (age uint64) {
 	age = 0
 <?
 	for _, e := range es {
@@ -35,7 +38,7 @@ func Age<?= q.Name ?>() (age uint64) {
 	return
 }
 
-func Get<?= q.Name ?>(id ecs.Id) (<?= q.Name ?>, bool) {
+func (<?= q.Name ?>Type) Get(id ecs.Id) (<?= q.Name ?>, bool) {
 	t := id.GetType()
 	index := (int)(id.GetId() - 1)
 	_ = index
@@ -73,7 +76,7 @@ func Get<?= q.Name ?>(id ecs.Id) (<?= q.Name ?>, bool) {
 	return <?= q.Name ?>{}, false
 }
 
-func Do<?= q.Name ?>() iter.Seq[<?= q.Name ?>] {
+func (<?= q.Name ?>Type) Do() iter.Seq[<?= q.Name ?>] {
 	return func(yield func(<?= q.Name ?>) bool) {
 <?
 	for  _, e := range es {
@@ -112,6 +115,18 @@ func Do<?= q.Name ?>() iter.Seq[<?= q.Name ?>] {
 	}
 ?>
 	}
+}
+
+func Age<?= q.Name ?>() (age uint64) {
+	return <?= q.Name ?>Type{}.Age()
+}
+
+func Get<?= q.Name ?>(id ecs.Id) (<?= q.Name ?>, bool) {
+	return <?= q.Name ?>Type{}.Get(id)
+}
+
+func Do<?= q.Name ?>() iter.Seq[<?= q.Name ?>] {
+	return <?= q.Name ?>Type{}.Do()
 }
 <?
 	if qt, ok := q.Tag.GetObject(Tag_Query); ok && qt.HasField(Tag_Cached) {
