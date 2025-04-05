@@ -9,13 +9,14 @@ import (
 func (g *GeneratorEcs) generateArchetype(wr io.Writer, id int, e *Type) {
 	g.genAs(wr, e)
 
+	eName := g.LocalTypeName(e)
 ?>
 
-func _<?= e.Name ?>_constraints() {
-	var _ ecs.Id = <?= e.Name ?>{}.Id
+func _<?= eName ?>_constraints() {
+	var _ ecs.Id = <?= eName ?>{}.Id
 }
 
-type storage_<?= e.Name ?> struct {
+type storage_<?= eName ?> struct {
 	ecs.BaseStorage
 
 <?
@@ -27,13 +28,13 @@ type storage_<?= e.Name ?> struct {
 ?>
 }
 
-var S_<?= e.Name ?> = storage_<?= e.Name ?>{
+var S_<?= eName ?> = storage_<?= eName ?>{
 	BaseStorage: ecs.MakeBaseStorage(<?= id  ?>),
 }
 
-func Match<?= e.Name ?>(id ecs.Id) (ecs.Ref[<?= e.Name ?>], bool) {
-	if id.GetType() == S_<?= e.Name ?>.TypeId() {
-		ref := ecs.Ref[<?= e.Name ?>]{Id: id}
+func Match<?= eName ?>(id ecs.Id) (ecs.Ref[<?= eName ?>], bool) {
+	if id.GetType() == S_<?= eName ?>.TypeId() {
+		ref := ecs.Ref[<?= eName ?>]{Id: id}
 		_ = ref.Get()
 
 		return ref, true
@@ -42,7 +43,7 @@ func Match<?= e.Name ?>(id ecs.Id) (ecs.Ref[<?= e.Name ?>], bool) {
 	for s := range EnumTypes(e.Subclasses) {
 ?>
 	if id.GetType() == S_<?= s.Name ?>.TypeId() {
-		ref := ecs.Ref[<?= e.Name ?>]{Id: id}
+		ref := ecs.Ref[<?= eName ?>]{Id: id}
 		_ = ref.Get()
 
 		return ref, true
@@ -51,19 +52,19 @@ func Match<?= e.Name ?>(id ecs.Id) (ecs.Ref[<?= e.Name ?>], bool) {
 	}
 ?>
 
-	return ecs.Ref[<?= e.Name ?>]{}, false
+	return ecs.Ref[<?= eName ?>]{}, false
 }
 
-func (e <?= e.Name ?>) Ref() ecs.Ref[<?= e.Name ?>] {
-	return ecs.Ref[<?= e.Name ?>] {
+func (e <?= eName ?>) Ref() ecs.Ref[<?= eName ?>] {
+	return ecs.Ref[<?= eName ?>] {
 		Id: e.Id,
-		Age: S_<?= e.Name ?>.Age(),
+		Age: S_<?= eName ?>.Age(),
 		Ptr: e,
 	}
 }
 
-func (e *<?= e.Name ?>) Allocate() ecs.Ref[<?= e.Name ?>] {
-	s := &S_<?= e.Name ?>
+func (e *<?= eName ?>) Allocate() ecs.Ref[<?= eName ?>] {
+	s := &S_<?= eName ?>
 	age, id := s.BaseStorage.AllocateId()
 	index := (int)(id.GetId() - 1)
 	_ = index
@@ -76,7 +77,7 @@ func (e *<?= e.Name ?>) Allocate() ecs.Ref[<?= e.Name ?>] {
 	}
 ?>
 
-	ref := ecs.Ref[<?= e.Name ?>]{
+	ref := ecs.Ref[<?= eName ?>]{
 		Age: age - 1,
 		Id:  id,
 	}
@@ -105,8 +106,8 @@ func (e *<?= e.Name ?>) Allocate() ecs.Ref[<?= e.Name ?>] {
 	return ref
 }
 
-func (e *<?= e.Name ?>) Free() {
-	Free<?= e.Name ?>(e.Id)
+func (e *<?= eName ?>) Free() {
+	Free<?= eName ?>(e.Id)
 }
 
 <?
@@ -117,14 +118,14 @@ func (e *<?= e.Name ?>) Free() {
 	}
 ?>
 
-func Allocate<?= e.Name ?>() (ref ecs.Ref[<?= e.Name ?>], entity <?= e.Name ?>) {
-	var e *<?= e.Name ?> = nil
+func Allocate<?= eName ?>() (ref ecs.Ref[<?= eName ?>], entity <?= eName ?>) {
+	var e *<?= eName ?> = nil
 	ref = e.Allocate()
 	return ref, ref.Ptr
 }
 
-func Free<?= e.Name ?>(id ecs.Id) {
-	s := &S_<?= e.Name ?>
+func Free<?= eName ?>(id ecs.Id) {
+	s := &S_<?= eName ?>
 	index := (int)(id.GetId() - 1)
 	_ = index
 
@@ -139,20 +140,20 @@ func Free<?= e.Name ?>(id ecs.Id) {
 	s.Free(id)
 }
 
-func Update<?= e.Name ?>Id(id ecs.Id) {
+func Update<?= eName ?>Id(id ecs.Id) {
 	tid := id.GetType()
-	if s := S_<?= e.Name ?>; s.TypeId() == tid {
+	if s := S_<?= eName ?>; s.TypeId() == tid {
 		index := (int)(id.GetId() - 1)
 
-		S_<?= e.Name ?>.Ids[index] = id
+		S_<?= eName ?>.Ids[index] = id
 	}
 }
 <?
-	if _, ok := g.queries[e.Name+"Query"]; !ok {
+	if _, ok := g.queries[eName+"Query"]; !ok {
 ?>
 
-// Auto-generated query for <?= e.Name ?> entity
-type <?= e.Name ?>Query struct {
+// Auto-generated query for <?= eName ?> entity
+type <?= eName ?>Query struct {
 	_ ecs.MetaTag `ecs:"query: {<?= e.QueryTags ?>}"`
 
 	Id ecs.Id
@@ -201,8 +202,11 @@ func (g *GeneratorEcs) fnLoad(wr io.Writer, e *Type) {
 	if e.HasFunction("Load") {
 		return
 	}
+
+	eName := g.LocalTypeName(e)
+
 ?>
-func (e <?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, <?= e.Name ?>) {
+func (e <?= eName ?>) Load(age uint64, id ecs.Id) (uint64, <?= eName ?>) {
 	index := (int)(id.GetId() - 1)
 	tid := id.GetType()
 	_ = index
@@ -242,7 +246,7 @@ func (e <?= e.Name ?>) Load(age uint64, id ecs.Id) (uint64, <?= e.Name ?>) {
 		}
 	}
 ?>
-	if s := S_<?= e.Name ?>; s.TypeId() == tid {
+	if s := S_<?= eName ?>; s.TypeId() == tid {
 		if age != s.Age() {
 			e.Id = id
 <?
@@ -272,9 +276,12 @@ func (g *GeneratorEcs) fnStore(wr io.Writer, typ *Type) {
 	if !typ.NeedStore() {
 		return
 	}
+
+	typName := g.LocalTypeName(typ)
+
 ?>
 
-func (e *<?= typ.Name ?>) Store() {
+func (e *<?= typName ?>) Store() {
 <?
 	for field := range EnumFieldsSeq(typ.StoreComponentsSeq()) {
 		if field.IsArray {
@@ -291,7 +298,7 @@ func (e *<?= typ.Name ?>) Store() {
 			g.genFieldEcsCall(wr, field, "Store")
 	}
 ?>
-	Update<?= typ.Name ?>Id(e.Id.Store())
+	Update<?= typName ?>Id(e.Id.Store())
 }
 <?
 }
@@ -300,9 +307,12 @@ func (g *GeneratorEcs) fnRestore(wr io.Writer, typ *Type) {
 	if !typ.NeedRestore() {
 		return
 	}
+
+	typName := g.LocalTypeName(typ)
+
 ?>
 
-func (e *<?= typ.Name ?>) Restore() {
+func (e *<?= typName ?>) Restore() {
 <?
 	for field := range EnumFieldsSeq(typ.StoreComponentsSeq()) {
 		if field.IsArray {
@@ -319,7 +329,7 @@ func (e *<?= typ.Name ?>) Restore() {
 	}
 
 ?>
-	Update<?= typ.Name ?>Id(e.Id.Restore())
+	Update<?= typName ?>Id(e.Id.Restore())
 }
 <?
 }

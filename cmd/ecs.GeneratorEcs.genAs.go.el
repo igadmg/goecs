@@ -13,11 +13,11 @@ func (g *GeneratorEcs) genAs(wr io.Writer, t *Type) {
 				if af.IsEcsRef() {
 ?>
 
-func (e <?= t.Name ?>) <?= af.GetA() ?>() <?= af.GetType().GetName() ?> {
+func (e <?= t.Name ?>) <?= af.GetA() ?>() <?= g.LocalTypeName(af.GetType()) ?> {
 	return e.<?= f.GetName() ?>.<?= af.GetName() ?>.Get()
 }
 
-func (e <?= t.Name ?>) <?= af.GetA() ?>Ref() ecs.Ref[<?= af.GetType().GetName() ?>] {
+func (e <?= t.Name ?>) <?= af.GetA() ?>Ref() ecs.Ref[<?= g.LocalTypeName(af.GetType()) ?>] {
 	return e.<?= f.GetName() ?>.<?= af.GetName() ?>
 }
 

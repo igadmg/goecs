@@ -8,18 +8,20 @@ import (
 func (g *GeneratorEcs) generateArchetype(wr io.Writer, id int, e *Type) {
 	g.genAs(wr, e)
 
+	eName := g.LocalTypeName(e)
+
 	wr.Write([]byte(`
 
 func _`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`_constraints() {
 	var _ ecs.Id = `))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`{}.Id
 }
 
 type storage_`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(` struct {
 	ecs.BaseStorage
 
@@ -39,9 +41,9 @@ type storage_`))
 	wr.Write([]byte(`}
 
 var S_`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(` = storage_`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`{
 	BaseStorage: ecs.MakeBaseStorage(`))
 	wr.Write([]byte(fmt.Sprintf("%v", id)))
@@ -49,15 +51,15 @@ var S_`))
 }
 
 func Match`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`(id ecs.Id) (ecs.Ref[`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`], bool) {
 	if id.GetType() == S_`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`.TypeId() {
 		ref := ecs.Ref[`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`]{Id: id}
 		_ = ref.Get()
 
@@ -71,7 +73,7 @@ func Match`))
 		wr.Write([]byte(fmt.Sprintf("%v", s.Name)))
 		wr.Write([]byte(`.TypeId() {
 		ref := ecs.Ref[`))
-		wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+		wr.Write([]byte(fmt.Sprintf("%v", eName)))
 		wr.Write([]byte(`]{Id: id}
 		_ = ref.Get()
 
@@ -83,33 +85,33 @@ func Match`))
 
 	wr.Write([]byte(`
 	return ecs.Ref[`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`]{}, false
 }
 
 func (e `))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`) Ref() ecs.Ref[`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`] {
 	return ecs.Ref[`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`] {
 		Id: e.Id,
 		Age: S_`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`.Age(),
 		Ptr: e,
 	}
 }
 
 func (e *`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`) Allocate() ecs.Ref[`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`] {
 	s := &S_`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`
 	age, id := s.BaseStorage.AllocateId()
 	index := (int)(id.GetId() - 1)
@@ -130,7 +132,7 @@ func (e *`))
 
 	wr.Write([]byte(`
 	ref := ecs.Ref[`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`]{
 		Age: age - 1,
 		Id:  id,
@@ -167,10 +169,10 @@ func (e *`))
 }
 
 func (e *`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`) Free() {
 	Free`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`(e.Id)
 }
 
@@ -184,24 +186,24 @@ func (e *`))
 
 	wr.Write([]byte(`
 func Allocate`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`() (ref ecs.Ref[`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`], entity `))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`) {
 	var e *`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(` = nil
 	ref = e.Allocate()
 	return ref, ref.Ptr
 }
 
 func Free`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`(id ecs.Id) {
 	s := &S_`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`
 	index := (int)(id.GetId() - 1)
 	_ = index
@@ -224,29 +226,29 @@ func Free`))
 }
 
 func Update`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`Id(id ecs.Id) {
 	tid := id.GetType()
 	if s := S_`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`; s.TypeId() == tid {
 		index := (int)(id.GetId() - 1)
 
 		S_`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`.Ids[index] = id
 	}
 }
 `))
 
-	if _, ok := g.queries[e.Name+"Query"]; !ok {
+	if _, ok := g.queries[eName+"Query"]; !ok {
 
 		wr.Write([]byte(`
 // Auto-generated query for `))
-		wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+		wr.Write([]byte(fmt.Sprintf("%v", eName)))
 		wr.Write([]byte(` entity
 type `))
-		wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+		wr.Write([]byte(fmt.Sprintf("%v", eName)))
 		wr.Write([]byte(`Query struct {
 	_ ecs.MetaTag ` + "`" + `ecs:"query: {`))
 		wr.Write([]byte(fmt.Sprintf("%v", e.QueryTags)))
@@ -329,10 +331,12 @@ func (g *GeneratorEcs) fnLoad(wr io.Writer, e *Type) {
 		return
 	}
 
+	eName := g.LocalTypeName(e)
+
 	wr.Write([]byte(`func (e `))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`) Load(age uint64, id ecs.Id) (uint64, `))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`) {
 	index := (int)(id.GetId() - 1)
 	tid := id.GetType()
@@ -400,7 +404,7 @@ func (g *GeneratorEcs) fnLoad(wr io.Writer, e *Type) {
 	}
 
 	wr.Write([]byte(`	if s := S_`))
-	wr.Write([]byte(fmt.Sprintf("%v", e.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`; s.TypeId() == tid {
 		if age != s.Age() {
 			e.Id = id
@@ -448,9 +452,11 @@ func (g *GeneratorEcs) fnStore(wr io.Writer, typ *Type) {
 		return
 	}
 
+	typName := g.LocalTypeName(typ)
+
 	wr.Write([]byte(`
 func (e *`))
-	wr.Write([]byte(fmt.Sprintf("%v", typ.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", typName)))
 	wr.Write([]byte(`) Store() {
 `))
 
@@ -479,7 +485,7 @@ func (e *`))
 	}
 
 	wr.Write([]byte(`	Update`))
-	wr.Write([]byte(fmt.Sprintf("%v", typ.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", typName)))
 	wr.Write([]byte(`Id(e.Id.Store())
 }
 `))
@@ -491,9 +497,11 @@ func (g *GeneratorEcs) fnRestore(wr io.Writer, typ *Type) {
 		return
 	}
 
+	typName := g.LocalTypeName(typ)
+
 	wr.Write([]byte(`
 func (e *`))
-	wr.Write([]byte(fmt.Sprintf("%v", typ.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", typName)))
 	wr.Write([]byte(`) Restore() {
 `))
 
@@ -513,7 +521,7 @@ func (e *`))
 	}
 
 	wr.Write([]byte(`	Update`))
-	wr.Write([]byte(fmt.Sprintf("%v", typ.Name)))
+	wr.Write([]byte(fmt.Sprintf("%v", typName)))
 	wr.Write([]byte(`Id(e.Id.Restore())
 }
 `))

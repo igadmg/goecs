@@ -38,9 +38,6 @@ func NewGeneratorEcs() core.Generator {
 func (g *GeneratorEcs) NewType(t core.TypeI, spec *ast.TypeSpec) (core.TypeI, error) {
 	if t == nil {
 		t = NewType()
-		defer func() {
-			g.Types[t.GetName()] = t
-		}()
 	}
 
 	switch et := t.(type) {

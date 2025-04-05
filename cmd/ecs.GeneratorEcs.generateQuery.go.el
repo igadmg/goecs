@@ -5,6 +5,7 @@ import (
 	
 	"fmt"
 	"io"
+	"strings"
 )
 
 func (g *GeneratorEcs) generateQuery(wr io.Writer, q *Type, es []*Type) {
@@ -24,7 +25,7 @@ func Age<?= q.Name ?>() (age uint64) {
 ?>
 	age += S_<?= e.Name ?>.Age()
 <?
-		} else {
+		} else if strings.HasPrefix(e.GetPackage().Pkg.PkgPath, q.GetPackage().Pkg.PkgPath) {
 ?>
 	age += <?= e.GetPackage().Name ?>.S_<?= e.Name ?>.Age()
 <?
@@ -45,10 +46,12 @@ func Get<?= q.Name ?>(id ecs.Id) (<?= q.Name ?>, bool) {
 ?>
 	if s := &S_<?= e.Name ?>; s.TypeId() == t {
 <?
-		} else {
+		} else if strings.HasPrefix(e.GetPackage().Pkg.PkgPath, q.GetPackage().Pkg.PkgPath) {
 ?>
 	if s := &<?= e.GetPackage().Name ?>.S_<?= e.Name ?>; s.TypeId() == t {
 <?
+		} else {
+			continue
 		}
 ?>
 		return <?= q.Name ?>{
@@ -73,17 +76,18 @@ func Do<?= q.Name ?>() iter.Seq[<?= q.Name ?>] {
 	return func(yield func(<?= q.Name ?>) bool) {
 <?
 	for  _, e := range es {
-?>
-{
-<?
 	if e.GetPackage() == q.GetPackage() {
 ?>
-	s := &S_<?= e.Name ?>
+	{
+		s := &S_<?= e.Name ?>
 <?
-	}else {
+	} else if strings.HasPrefix(e.GetPackage().Pkg.PkgPath, q.GetPackage().Pkg.PkgPath) {
 ?>
-	s := &<?= e.GetPackage().Name ?>.S_<?= e.Name ?>
+	{
+		s := &<?= e.GetPackage().Name ?>.S_<?= e.Name ?>
 <?
+	} else {
+		continue
 	}
 ?>
 	for id := range s.EntityIds() {
