@@ -1,8 +1,9 @@
 package cmd
 
 import (
-	"github.com/igadmg/gogen/core"
 	"gopkg.in/yaml.v3"
+
+	"github.com/igadmg/gogen/core"
 )
 
 const (
