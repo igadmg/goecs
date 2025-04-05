@@ -39,6 +39,7 @@ func Get<?= q.Name ?>(id ecs.Id) (<?= q.Name ?>, bool) {
 	t := id.GetType()
 	index := (int)(id.GetId() - 1)
 	_ = index
+	_ = t
 
 <?
 	for  _, e := range es {
