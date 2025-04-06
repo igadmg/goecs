@@ -9,26 +9,32 @@ import (
 )
 
 func (g *GeneratorEcs) generateQuery(wr io.Writer, q *Type, es []*Type) {
+	local_name := g.LocalTypeName(q)
+	type_name := strings.ReplaceAll(local_name, ".", "_")
+
 	g.genAs(wr, q)
 
 ?>
 
-func _<?= q.Name ?>_constraints() {
-	var _ ecs.Id = <?= q.Name ?>{}.Id
+func _<?= type_name ?>_constraints() {
+	var _ ecs.Id = <?= local_name ?>{}.Id
+}
+
+func _<?= type_name ?>_register() {
 }
 
 type <?= q.Name ?>Type struct {
 }
 
-func (<?= q.Name ?>Type) Age() (age uint64) {
+func Age<?= type_name ?>() (age uint64) {
 	age = 0
 <?
 	for _, e := range es {
-		if e.GetPackage() == q.GetPackage() {
+		if e.GetPackage() == g.Pkg {
 ?>
 	age += S_<?= e.Name ?>.Age()
 <?
-		} else if strings.HasPrefix(e.GetPackage().Pkg.PkgPath, q.GetPackage().Pkg.PkgPath) {
+		} else if g.Pkg.Above(e.GetPackage()) {
 ?>
 	age += <?= e.GetPackage().Name ?>.S_<?= e.Name ?>.Age()
 <?
@@ -38,7 +44,7 @@ func (<?= q.Name ?>Type) Age() (age uint64) {
 	return
 }
 
-func (<?= q.Name ?>Type) Get(id ecs.Id) (<?= q.Name ?>, bool) {
+func Get<?= type_name ?>(id ecs.Id) (<?= local_name ?>, bool) {
 	t := id.GetType()
 	index := (int)(id.GetId() - 1)
 	_ = index
@@ -46,11 +52,11 @@ func (<?= q.Name ?>Type) Get(id ecs.Id) (<?= q.Name ?>, bool) {
 
 <?
 	for  _, e := range es {
-		if e.GetPackage() == q.GetPackage() {
+		if e.GetPackage() == g.Pkg {
 ?>
 	if s := &S_<?= e.Name ?>; s.TypeId() == t {
 <?
-		} else if strings.HasPrefix(e.GetPackage().Pkg.PkgPath, q.GetPackage().Pkg.PkgPath) {
+		} else if g.Pkg.Above(e.GetPackage()) {
 ?>
 	if s := &<?= e.GetPackage().Name ?>.S_<?= e.Name ?>; s.TypeId() == t {
 <?
@@ -58,7 +64,7 @@ func (<?= q.Name ?>Type) Get(id ecs.Id) (<?= q.Name ?>, bool) {
 			continue
 		}
 ?>
-		return <?= q.Name ?>{
+		return <?= local_name ?>{
 			Id:      id,
 <?
 		for iq := range EnumFieldsSeq(q.StructComponentsSeq()) {
@@ -73,19 +79,19 @@ func (<?= q.Name ?>Type) Get(id ecs.Id) (<?= q.Name ?>, bool) {
 	}
 ?>
 
-	return <?= q.Name ?>{}, false
+	return <?= local_name ?>{}, false
 }
 
-func (<?= q.Name ?>Type) Do() iter.Seq[<?= q.Name ?>] {
-	return func(yield func(<?= q.Name ?>) bool) {
+func Do<?= type_name ?>() iter.Seq[<?= local_name ?>] {
+	return func(yield func(<?= local_name ?>) bool) {
 <?
 	for  _, e := range es {
-	if e.GetPackage() == q.GetPackage() {
+	if e.GetPackage() == g.Pkg {
 ?>
 	{
 		s := &S_<?= e.Name ?>
 <?
-	} else if strings.HasPrefix(e.GetPackage().Pkg.PkgPath, q.GetPackage().Pkg.PkgPath) {
+	} else if g.Pkg.Above(e.GetPackage()) {
 ?>
 	{
 		s := &<?= e.GetPackage().Name ?>.S_<?= e.Name ?>
@@ -97,7 +103,7 @@ func (<?= q.Name ?>Type) Do() iter.Seq[<?= q.Name ?>] {
 	for id := range s.EntityIds() {
 		index := (int)(id.GetId() - 1)
 		_ = index
-		if !yield(<?= q.Name ?>{
+		if !yield(<?= local_name ?>{
 			Id:       id,
 <?
 		for iq := range EnumFieldsSeq(q.StructComponentsSeq()) {
@@ -116,20 +122,10 @@ func (<?= q.Name ?>Type) Do() iter.Seq[<?= q.Name ?>] {
 ?>
 	}
 }
-
-func Age<?= q.Name ?>() (age uint64) {
-	return <?= q.Name ?>Type{}.Age()
-}
-
-func Get<?= q.Name ?>(id ecs.Id) (<?= q.Name ?>, bool) {
-	return <?= q.Name ?>Type{}.Get(id)
-}
-
-func Do<?= q.Name ?>() iter.Seq[<?= q.Name ?>] {
-	return <?= q.Name ?>Type{}.Do()
-}
 <?
-	if qt, ok := q.Tag.GetObject(Tag_Query); ok && qt.HasField(Tag_Cached) {
+
+	if q.Package == g.Pkg {
+		if qt, ok := q.Tag.GetObject(Tag_Query); ok && qt.HasField(Tag_Cached) {
 ?>
 
 type <?= q.Name ?>Cache struct {
@@ -148,6 +144,7 @@ func (r *<?= q.Name ?>Cache) Query() bool {
 	return false
 }
 <?
+		}
 	}
 }
 ?>

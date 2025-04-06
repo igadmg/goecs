@@ -3,7 +3,10 @@ package cmd
 import (
 	"bytes"
 	"go/ast"
+	"iter"
+	"slices"
 
+	"deedles.dev/xiter"
 	"github.com/igadmg/gogen/core"
 )
 
@@ -122,6 +125,7 @@ func (g *GeneratorEcs) GetEcsType(name string) (t EcsTypeI, ok bool) {
 
 func (g *GeneratorEcs) Prepare() {
 	g.GeneratorBaseT.Prepare()
+	g.EntitesByQueries = map[*Type][]*Type{}
 
 	for _, q := range g.queries {
 		g.EntitesByQueries[q] = []*Type{}
@@ -160,4 +164,35 @@ func (g *GeneratorEcs) Generate(pkg *core.Package) bytes.Buffer {
 	g.Prepare()
 	g.generate(&source)
 	return source
+}
+
+type QueriesSeqItem struct {
+	Query *Type
+	Archs []*Type
+}
+
+func (g *GeneratorEcs) QueriesSeq() iter.Seq[QueriesSeqItem] {
+	return func(yield func(QueriesSeqItem) bool) {
+		for q, es := range g.EntitesByQueries {
+			if q.GetPackage() != g.Pkg && !g.Pkg.Above(q.GetPackage()) {
+				continue
+			}
+
+			archs := slices.Collect(
+				xiter.Filter(slices.Values(es), func(t *Type) bool {
+					return t.Package == g.Pkg
+				}))
+
+			if len(archs) == 0 {
+				continue
+			}
+
+			if !yield(QueriesSeqItem{
+				Query: q,
+				Archs: archs,
+			}) {
+				return
+			}
+		}
+	}
 }

@@ -88,6 +88,9 @@ func (f *Field) Prepare(tf core.TypeFactory) error {
 		f.isEcsRef = strings.HasPrefix(f.TypeName, "ecs.Ref[")
 		if f.isEcsRef {
 			coreTypeName := strings.TrimSuffix(strings.TrimPrefix(f.TypeName, "ecs.Ref["), "]")
+			if !strings.ContainsAny(coreTypeName, ".") {
+				coreTypeName = f.OwnerType.GetPackage().Name + "." + coreTypeName
+			}
 			f.Type, _ = tf.GetType(coreTypeName)
 		} else {
 			return err

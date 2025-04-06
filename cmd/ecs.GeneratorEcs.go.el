@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"maps"
+	"slices"
 	"strings"
 
 	"deedles.dev/xiter"
@@ -25,7 +26,7 @@ import (
 	"github.com/igadmg/gamemath/vector2"
 <?
 	for _, p := range g.Pkgs {
-		if strings.HasPrefix(g.Pkg.Pkg.PkgPath, p.Pkg.PkgPath) {
+		if p.Above(g.Pkg) {
 			continue
 		}
 ?>
@@ -114,28 +115,34 @@ func _Entity_constraints(v bool) bool {
 // <?= e.Name ?>
 <?
 	}
+
+	entitesByQueries := slices.Collect(g.QueriesSeq())
 ?>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//// Queries num <?= len(g.EntitesByQueries) ?>
+//// Queries num <?= len(entitesByQueries) ?>
 ///
 
 var _ bool = _Query_constraints(false)
 
 func _Query_constraints(v bool) bool {
-	if !v {
-		return true
+	if v {
+<?
+	for _, q := range entitesByQueries {
+		name := strings.ReplaceAll(g.LocalTypeName(q.Query), ".", "_")
+?>
+	_<?= name ?>_constraints()
+<?
+	}
+?>
 	}
 
 <?
-	for q := range g.EntitesByQueries {
-		if q.GetPackage() != g.Pkg {
-			continue
-		}
-
+	for _, q := range entitesByQueries {
+		name := strings.ReplaceAll(g.LocalTypeName(q.Query), ".", "_")
 ?>
-	_<?= q.Name ?>_constraints()
+	_<?= name ?>_register()
 <?
 	}
 ?>
@@ -143,18 +150,13 @@ func _Query_constraints(v bool) bool {
 	return true
 }
 <?
-	for q, es := range g.EntitesByQueries {
-		if q.GetPackage() != g.Pkg {
-			continue
-		}
-
+	for _, q := range entitesByQueries {
 ?>
 //////////
-// <?= q.Name ?>
+// <?= g.LocalTypeName(q.Query) ?>
 <?
-		g.generateQuery(wr, q, es)
+		g.generateQuery(wr, q.Query, q.Archs)
 	}
-
 ?>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
