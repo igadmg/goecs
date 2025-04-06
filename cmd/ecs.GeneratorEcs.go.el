@@ -177,10 +177,7 @@ type _<?= type_name ?>Type struct {
 
 var <?= type_name ?>Type _<?= type_name ?>Type
 <?
-		}
-
-
-		if !q.AnyLocal {
+		} else if !q.AnyLocal {
 			continue
 		}
 
