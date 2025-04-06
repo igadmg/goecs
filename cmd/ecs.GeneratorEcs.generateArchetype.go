@@ -105,6 +105,20 @@ func (e `))
 	}
 }
 
+func (e `))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
+	wr.Write([]byte(`) Get() `))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
+	wr.Write([]byte(` {
+	ref := ecs.Ref[`))
+	wr.Write([]byte(fmt.Sprintf("%v", eName)))
+	wr.Write([]byte(`] {
+		Id: e.Id,
+	}
+	return ref.Get()
+}
+
+
 func (e *`))
 	wr.Write([]byte(fmt.Sprintf("%v", eName)))
 	wr.Write([]byte(`) Allocate() ecs.Ref[`))

@@ -63,6 +63,14 @@ func (e <?= eName ?>) Ref() ecs.Ref[<?= eName ?>] {
 	}
 }
 
+func (e <?= eName ?>) Get() <?= eName ?> {
+	ref := ecs.Ref[<?= eName ?>] {
+		Id: e.Id,
+	}
+	return ref.Get()
+}
+
+
 func (e *<?= eName ?>) Allocate() ecs.Ref[<?= eName ?>] {
 	s := &S_<?= eName ?>
 	age, id := s.BaseStorage.AllocateId()
