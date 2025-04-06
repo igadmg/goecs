@@ -179,7 +179,7 @@ type <?= eName ?>Query struct {
 }
 
 func (g *GeneratorEcs) genFieldEcsCall(wr io.Writer, f *Field, call string) {
-	if f.IsArray {
+	if f.IsArray() {
 		if f.isEcsRef {
 ?>
 	for i := range e.<?= f.Name ?> {
@@ -292,7 +292,7 @@ func (g *GeneratorEcs) fnStore(wr io.Writer, typ *Type) {
 func (e *<?= typName ?>) Store() {
 <?
 	for field := range EnumFieldsSeq(typ.StoreComponentsSeq()) {
-		if field.IsArray {
+		if field.IsArray() {
 			} else {
 				if field.isEcsRef {
 				} else {
@@ -323,7 +323,7 @@ func (g *GeneratorEcs) fnRestore(wr io.Writer, typ *Type) {
 func (e *<?= typName ?>) Restore() {
 <?
 	for field := range EnumFieldsSeq(typ.StoreComponentsSeq()) {
-		if field.IsArray {
+		if field.IsArray() {
 		} else {
 		}
 

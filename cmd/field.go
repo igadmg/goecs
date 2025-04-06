@@ -34,6 +34,12 @@ func (f Field) IsEcsRef() bool {
 
 func (f Field) GetA() string {
 	a, _ := f.Tag.GetField("a")
+	if a == "" {
+		a = f.Name
+		if len(a) > 0 {
+			a = strings.ToUpper(a[:1]) + a[1:]
+		}
+	}
 	return a
 }
 

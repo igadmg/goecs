@@ -21,7 +21,7 @@ func (e *<?= typ.Name ?>) Store() {
 <?
 	for field := range EnumFieldsSeq(typ.StoreComponentsSeq()) {
 		if field.isEcsRef {
-			if field.IsArray {
+			if field.IsArray() {
 ?>
 	for i := range e.<?= field.Name ?> {
 		e.<?= field.Name ?>[i].Store()
@@ -49,7 +49,7 @@ func (e *<?= typ.Name ?>) Restore() {
 <?
 	for field := range EnumFieldsSeq(typ.StoreComponentsSeq()) {
 		if field.isEcsRef {
-			if field.IsArray {
+			if field.IsArray() {
 ?>
 	for i := range e.<?= field.Name ?> {
 		e.<?= field.Name ?>[i].Restore()

@@ -367,7 +367,7 @@ func (t *Type) StoreComponentsSeq() iter.Seq[EcsFieldI] {
 				//	continue
 				//}
 
-				if !field.IsArray {
+				if !field.IsArray() {
 					if !field.isEcsRef && (field.Tag.HasField(Tag_Virtual)) {
 						continue
 					}

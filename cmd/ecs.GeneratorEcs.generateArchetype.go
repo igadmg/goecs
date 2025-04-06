@@ -289,7 +289,7 @@ type `))
 }
 
 func (g *GeneratorEcs) genFieldEcsCall(wr io.Writer, f *Field, call string) {
-	if f.IsArray {
+	if f.IsArray() {
 		if f.isEcsRef {
 
 			wr.Write([]byte(`	for i := range e.`))
@@ -475,7 +475,7 @@ func (e *`))
 `))
 
 	for field := range EnumFieldsSeq(typ.StoreComponentsSeq()) {
-		if field.IsArray {
+		if field.IsArray() {
 		} else {
 			if field.isEcsRef {
 			} else {
@@ -520,7 +520,7 @@ func (e *`))
 `))
 
 	for field := range EnumFieldsSeq(typ.StoreComponentsSeq()) {
-		if field.IsArray {
+		if field.IsArray() {
 		} else {
 		}
 
