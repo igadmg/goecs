@@ -38,12 +38,12 @@ func (o <?= decltype ?>) <?= f.Name ?>_ref(id ecs.Id) func(<?= f.DeclArguments()
 				switch Tag(typ.GetTag()).GetEcsTag() {
 				case EcsArchetype:
 ?>
-		_, o := ecs.GetT[<?= typ.GetName() ?>](id)
+		_, o := ecs.GetT[<?= g.LocalTypeName(typ) ?>](id)
 
 <?
 				case EcsQuery:
 ?>
-		o, ok := Get<?= typ.GetName() ?>(id)
+		o, ok := <?= g.LocalTypeName(typ) ?>Type.Get(id)
 		if !ok {
 			return
 		}

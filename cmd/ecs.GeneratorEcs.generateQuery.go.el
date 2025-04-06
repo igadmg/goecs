@@ -8,7 +8,8 @@ import (
 	"strings"
 )
 
-func (g *GeneratorEcs) generateQuery(wr io.Writer, q *Type, es []*Type) {
+func (g *GeneratorEcs) generateQuery(wr io.Writer, qsi QueriesSeqItem) {
+	q := qsi.Query
 	local_name := g.LocalTypeName(q)
 	type_name := strings.ReplaceAll(local_name, ".", "_")
 
@@ -16,20 +17,16 @@ func (g *GeneratorEcs) generateQuery(wr io.Writer, q *Type, es []*Type) {
 
 ?>
 
-func _<?= type_name ?>_constraints() {
-	var _ ecs.Id = <?= local_name ?>{}.Id
-}
-
 func _<?= type_name ?>_register() {
+	<?= local_name ?>Type.Age = age<?= type_name ?>
+	<?= local_name ?>Type.Get = get<?= type_name ?>
+	<?= local_name ?>Type.Do = do<?= type_name ?>
 }
 
-type <?= q.Name ?>Type struct {
-}
-
-func Age<?= type_name ?>() (age uint64) {
+func age<?= type_name ?>() (age uint64) {
 	age = 0
 <?
-	for _, e := range es {
+	for _, e := range qsi.Archs {
 		if e.GetPackage() == g.Pkg {
 ?>
 	age += S_<?= e.Name ?>.Age()
@@ -44,14 +41,14 @@ func Age<?= type_name ?>() (age uint64) {
 	return
 }
 
-func Get<?= type_name ?>(id ecs.Id) (<?= local_name ?>, bool) {
+func get<?= type_name ?>(id ecs.Id) (<?= local_name ?>, bool) {
 	t := id.GetType()
 	index := (int)(id.GetId() - 1)
 	_ = index
 	_ = t
 
 <?
-	for  _, e := range es {
+	for  _, e := range qsi.Archs {
 		if e.GetPackage() == g.Pkg {
 ?>
 	if s := &S_<?= e.Name ?>; s.TypeId() == t {
@@ -82,23 +79,23 @@ func Get<?= type_name ?>(id ecs.Id) (<?= local_name ?>, bool) {
 	return <?= local_name ?>{}, false
 }
 
-func Do<?= type_name ?>() iter.Seq[<?= local_name ?>] {
+func do<?= type_name ?>() iter.Seq[<?= local_name ?>] {
 	return func(yield func(<?= local_name ?>) bool) {
 <?
-	for  _, e := range es {
-	if e.GetPackage() == g.Pkg {
+	for  _, e := range qsi.Archs {
+		if e.GetPackage() == g.Pkg {
 ?>
 	{
 		s := &S_<?= e.Name ?>
 <?
-	} else if g.Pkg.Above(e.GetPackage()) {
+		} else if g.Pkg.Above(e.GetPackage()) {
 ?>
 	{
 		s := &<?= e.GetPackage().Name ?>.S_<?= e.Name ?>
 <?
-	} else {
-		continue
-	}
+		} else {
+			continue
+		}
 ?>
 	for id := range s.EntityIds() {
 		index := (int)(id.GetId() - 1)
@@ -134,9 +131,10 @@ type <?= q.Name ?>Cache struct {
 }
 
 func (r *<?= q.Name ?>Cache) Query() bool {
-	if r.Age != Age<?= q.Name ?>() {
-		r.Age = Age<?= q.Name ?>()
-		r.Cache = slices.Collect(Do<?= q.Name ?>())
+	q_age := <?= q.Name ?>Type.Age()
+	if r.Age != q_age {
+		r.Age = q_age
+		r.Cache = slices.Collect(<?= q.Name ?>Type.Do())
 
 		return true
 	}

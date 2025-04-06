@@ -130,16 +130,24 @@ func _Query_constraints(v bool) bool {
 	if v {
 <?
 	for _, q := range entitesByQueries {
+		if q.Query.Package != g.Pkg {
+			continue
+		}
+
 		name := strings.ReplaceAll(g.LocalTypeName(q.Query), ".", "_")
 ?>
-	_<?= name ?>_constraints()
-<?
+		_<?= name ?>_constraints()
+<?	
 	}
 ?>
 	}
-
 <?
+
 	for _, q := range entitesByQueries {
+		if !q.AnyLocal {
+			continue
+		}
+
 		name := strings.ReplaceAll(g.LocalTypeName(q.Query), ".", "_")
 ?>
 	_<?= name ?>_register()
@@ -151,11 +159,37 @@ func _Query_constraints(v bool) bool {
 }
 <?
 	for _, q := range entitesByQueries {
+		if q.Query.Package == g.Pkg {
+			local_name := g.LocalTypeName(q.Query)
+			type_name := strings.ReplaceAll(local_name, ".", "_")
+
 ?>
+
+func _<?= type_name ?>_constraints() {
+	var _ ecs.Id = <?= local_name ?>{}.Id
+}
+
+type _<?= type_name ?>Type struct {
+	Age func() (age uint64)
+	Get func(id ecs.Id) (<?= type_name ?>, bool)
+	Do  func() iter.Seq[<?= type_name ?>]
+}
+
+var <?= type_name ?>Type _<?= type_name ?>Type
+<?
+		}
+
+
+		if !q.AnyLocal {
+			continue
+		}
+
+?>
+
 //////////
 // <?= g.LocalTypeName(q.Query) ?>
 <?
-		g.generateQuery(wr, q.Query, q.Archs)
+		g.generateQuery(wr, q)
 	}
 ?>
 

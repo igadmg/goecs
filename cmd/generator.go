@@ -167,8 +167,9 @@ func (g *GeneratorEcs) Generate(pkg *core.Package) bytes.Buffer {
 }
 
 type QueriesSeqItem struct {
-	Query *Type
-	Archs []*Type
+	Query    *Type
+	Archs    []*Type
+	AnyLocal bool
 }
 
 func (g *GeneratorEcs) QueriesSeq() iter.Seq[QueriesSeqItem] {
@@ -178,17 +179,23 @@ func (g *GeneratorEcs) QueriesSeq() iter.Seq[QueriesSeqItem] {
 				continue
 			}
 
+			anyLocal := false
 			archs := slices.Collect(
 				xiter.Filter(slices.Values(es), func(t *Type) bool {
-					return t.Package == g.Pkg
+					if t.Package == g.Pkg {
+						anyLocal = true
+						return true
+					}
+					return g.Pkg.Above(t.Package)
 				}))
 
-			if len(archs) == 0 {
+			if q.GetPackage() != g.Pkg && len(archs) == 0 {
 				continue
 			}
 
 			if !yield(QueriesSeqItem{
 				Query: q,
+				AnyLocal: anyLocal,
 				Archs: archs,
 			}) {
 				return
