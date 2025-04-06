@@ -1,6 +1,9 @@
 package ecs
 
-import "log/slog"
+import (
+	"iter"
+	"log/slog"
+)
 
 type IsAllocatable[T any] interface {
 	Allocate() Ref[T]
@@ -78,6 +81,20 @@ func (r *Ref[T]) Get() T {
 	r.isNull = false
 
 	return r.Ptr
+}
+
+func Enum[T any](refs []Ref[T]) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, ref := range refs {
+			if ref.IsNull() {
+				continue
+			}
+
+			if !yield(ref.Get()) {
+				return
+			}
+		}
+	}
 }
 
 func GetT[T IsLoadable[T]](id Id) (age uint64, e T) {
