@@ -65,6 +65,15 @@ func (e <?= t.Name ?>) Set<?= af.GetA() ?>(v <?= af.GetTypeName() ?>) {
 }
 <?
 						}
+
+						if !t.HasFunction("Reset" + af.GetA()) {
+?>
+
+func (e <?= t.Name ?>) Reset<?= af.GetA() ?>() {
+	e.<?= f.GetName() ?>.<?= af.GetName() ?>.Id = ecs.InvalidId
+}
+<?
+						}
 					}	
 				} else {
 					if !t.HasFunction(af.GetA()) {

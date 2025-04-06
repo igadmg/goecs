@@ -22,6 +22,10 @@ const (
 	IdMask        = (uint64(1) << IdBits) - 1
 )
 
+var (
+	InvalidId Id = Id{0}
+)
+
 func MakeId(id uint64, typ uint32) Id {
 	return Id{id | (uint64(typ) << TypeMaskShift)}
 }
