@@ -16,7 +16,7 @@ require (
 	github.com/hymkor/go-lazy v0.5.0
 	github.com/igadmg/gamemath v0.0.0-20250404225837-2cb2391130a0
 	github.com/igadmg/goex v0.0.0-20250325133153-61aee7990ef8
-	github.com/igadmg/gogen v0.0.0-20250405165529-9df5cbb0130e
+	github.com/igadmg/gogen v0.0.0-20250406164412-de4b9628bbad
 	gopkg.in/yaml.v3 v3.0.1
 )
 
