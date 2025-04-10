@@ -70,7 +70,6 @@ func (e <?= eName ?>) Get() <?= eName ?> {
 	return ref.Get()
 }
 
-
 func (e *<?= eName ?>) Allocate() ecs.Ref[<?= eName ?>] {
 	s := &S_<?= eName ?>
 	age, id := s.BaseStorage.AllocateId()

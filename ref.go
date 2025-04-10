@@ -102,6 +102,7 @@ func GetT[T IsLoadable[T]](id Id) (age uint64, e T) {
 	return t.Load(0, id)
 }
 
+// Deallocates object. For some reason is called Defer
 func (r *Ref[T]) Defer() {
 	if r.Id.IsNull() {
 		return

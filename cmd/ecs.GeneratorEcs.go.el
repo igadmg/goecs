@@ -176,6 +176,11 @@ type _<?= type_name ?>Type struct {
 }
 
 var <?= type_name ?>Type _<?= type_name ?>Type
+
+func (e <?= type_name ?>) Get() <?= type_name ?> {
+	r, _ := <?= type_name ?>Type.Get(e.Id)
+	return r
+}
 <?
 		} else if !q.AnyLocal {
 			continue
