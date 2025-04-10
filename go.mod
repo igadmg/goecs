@@ -16,14 +16,14 @@ require (
 	github.com/hymkor/go-lazy v0.5.0
 	github.com/igadmg/gamemath v0.0.0-20250407220800-e0f0f8b07f23
 	github.com/igadmg/goex v0.0.0-20250407220752-712c023573b8
-	github.com/igadmg/gogen v0.0.0-20250406183858-8d0ef08fa8b7
+	github.com/igadmg/gogen v0.0.0-20250410213935-df4fdb3b8f8a
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
 	github.com/chewxy/math32 v1.11.1 // indirect
-	github.com/igadmg/goel v0.0.0-20250405114509-16c7acdf047b // indirect
-	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 // indirect
+	github.com/igadmg/goel v0.0.0-20250410203636-1e64bb5aa9ed // indirect
+	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0 // indirect
 	golang.org/x/mod v0.24.0 // indirect
 	golang.org/x/sync v0.13.0 // indirect
 	golang.org/x/tools v0.32.0 // indirect
