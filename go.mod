@@ -14,9 +14,9 @@ replace (
 require (
 	deedles.dev/xiter v0.2.1
 	github.com/hymkor/go-lazy v0.5.0
-	github.com/igadmg/gamemath v0.0.0-20250407220800-e0f0f8b07f23
+	github.com/igadmg/gamemath v0.0.0-20250410220553-87672598e3a6
 	github.com/igadmg/goex v0.0.0-20250407220752-712c023573b8
-	github.com/igadmg/gogen v0.0.0-20250410213935-df4fdb3b8f8a
+	github.com/igadmg/gogen v0.0.0-20250410220610-3903be0a0ba3
 	gopkg.in/yaml.v3 v3.0.1
 )
 
