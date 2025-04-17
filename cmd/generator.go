@@ -8,6 +8,9 @@ import (
 
 	"deedles.dev/xiter"
 	"github.com/igadmg/gogen/core"
+	"gonum.org/v1/gonum/graph"
+	"gonum.org/v1/gonum/graph/encoding"
+	"gonum.org/v1/gonum/graph/simple"
 )
 
 type GeneratorEcs struct {
@@ -194,12 +197,80 @@ func (g *GeneratorEcs) QueriesSeq() iter.Seq[QueriesSeqItem] {
 			}
 
 			if !yield(QueriesSeqItem{
-				Query: q,
+				Query:    q,
 				AnyLocal: anyLocal,
-				Archs: archs,
+				Archs:    archs,
 			}) {
 				return
 			}
 		}
 	}
+}
+
+type ecsGraph struct {
+	*simple.DirectedGraph
+}
+
+type ecsNode struct {
+	graph.Node
+	Type *Type
+}
+
+func (g ecsNode) DOTID() string {
+	return g.Type.Name
+}
+
+func (g ecsNode) Attributes() (attrs []encoding.Attribute) {
+	switch g.Type.EType {
+	case EcsArchetype:
+		attrs = append(attrs, encoding.Attribute{
+			Key:   "shape",
+			Value: "box",
+		})
+	}
+
+	return
+}
+
+func (g *GeneratorEcs) Graph() graph.Graph {
+	r := ecsGraph{
+		DirectedGraph: simple.NewDirectedGraph(),
+	}
+
+	enodes := map[string]ecsNode{}
+	for _, i := range g.entities {
+		n := ecsNode{Node: r.NewNode(), Type: i}
+		r.AddNode(n)
+		enodes[i.Name] = n
+	}
+
+	cnodes := map[string]ecsNode{}
+	for _, i := range g.components {
+		n := ecsNode{Node: r.NewNode(), Type: i}
+		r.AddNode(n)
+		cnodes[i.Name] = n
+	}
+
+	for _, e := range g.entities {
+		en := enodes[e.Name]
+		for cf := range e.StructComponentsSeq() {
+			if ct := cf.GetType(); ct != nil {
+				cn := cnodes[ct.GetName()]
+				r.SetEdge(r.NewEdge(en, cn))
+			}
+		}
+	}
+
+	for _, c := range g.components {
+		cn := cnodes[c.Name]
+		for bf := range c.BasesSeq() {
+			if bt := bf.GetType(); bt != nil {
+				if bn, ok := cnodes[bt.GetName()]; ok {
+					r.SetEdge(r.NewEdge(cn, bn))
+				}
+			}
+		}
+	}
+
+	return r
 }

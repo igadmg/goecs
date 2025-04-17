@@ -6,6 +6,16 @@ type Id struct {
 	value uint64
 }
 
+type IdType_ struct {
+	GetTypeName func(tid uint32) string
+}
+
+var IdType IdType_ = IdType_{
+	GetTypeName: func(tid uint32) string {
+		return "<unk>"
+	},
+}
+
 const (
 	FlagBits = 2
 	TypeBits = 10
@@ -31,7 +41,7 @@ func MakeId(id uint64, typ uint32) Id {
 }
 
 func (id Id) String() string {
-	return fmt.Sprintf("Id(%d:%d:%t:%t)", id.GetId(), id.GetType(), id.IsAllocated(), id.IsStored())
+	return fmt.Sprintf("Id(%d:%d:%s:%t:%t)", id.GetId(), id.GetType(), IdType.GetTypeName(id.GetType()), id.IsAllocated(), id.IsStored())
 }
 
 func (id Id) IsNull() bool {

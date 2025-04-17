@@ -70,7 +70,7 @@ func (e <?= eName ?>) Get() <?= eName ?> {
 	return ref.Get()
 }
 
-func (e *<?= eName ?>) Allocate() ecs.Ref[<?= eName ?>] {
+func (e <?= eName ?>) Allocate() ecs.Ref[<?= eName ?>] {
 	s := &S_<?= eName ?>
 	age, id := s.BaseStorage.AllocateId()
 	index := (int)(id.GetId() - 1)
@@ -90,7 +90,6 @@ func (e *<?= eName ?>) Allocate() ecs.Ref[<?= eName ?>] {
 	}
 	_ = ref.Get()
 
-	if e != nil {
 <?
 
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
@@ -100,20 +99,18 @@ func (e *<?= eName ?>) Allocate() ecs.Ref[<?= eName ?>] {
 			}
 
 ?>
-		if e.<?= c.Name ?> != nil {
-			*ref.Ptr.<?= c.Name ?> = *e.<?= c.Name ?>
-		}
+	if e.<?= c.Name ?> != nil {
+		*ref.Ptr.<?= c.Name ?> = *e.<?= c.Name ?>
+	}
 <?
 		}
  	}
 ?>
-		*e = ref.Ptr
-	}
 
 	return ref
 }
 
-func (e *<?= eName ?>) Free() {
+func (e <?= eName ?>) Free() {
 	Free<?= eName ?>(e.Id)
 }
 
@@ -126,7 +123,7 @@ func (e *<?= eName ?>) Free() {
 ?>
 
 func Allocate<?= eName ?>() (ref ecs.Ref[<?= eName ?>], entity <?= eName ?>) {
-	var e *<?= eName ?> = nil
+	var e <?= eName ?>
 	ref = e.Allocate()
 	return ref, ref.Ptr
 }

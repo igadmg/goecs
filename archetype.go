@@ -1,5 +1,9 @@
 package ecs
 
+type ArchetypeI[T any] interface {
+	Allocate() Ref[T]
+}
+
 type Archetype[T any] struct {
 	Id Id
 }

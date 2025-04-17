@@ -18,6 +18,7 @@ require (
 	github.com/igadmg/goex v0.0.0-20250407220752-712c023573b8
 	github.com/igadmg/gogen v0.0.0-20250410220610-3903be0a0ba3
 	gopkg.in/yaml.v3 v3.0.1
+	gonum.org/v1/gonum v0.16.0
 )
 
 require (

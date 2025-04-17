@@ -116,7 +116,7 @@ func (r *Ref[T]) Defer() {
 	r.Get()
 	func(t any) {
 		if t == nil {
-			slog.Warn("Entity already freed.", "id", r.Id)
+			slog.Warn("Entity defer failed badly.", "id", r.Id)
 			return
 		}
 
