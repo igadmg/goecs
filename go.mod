@@ -14,11 +14,11 @@ replace (
 require (
 	deedles.dev/xiter v0.2.1
 	github.com/hymkor/go-lazy v0.5.0
-	github.com/igadmg/gamemath v0.0.0-20250410220553-87672598e3a6
+	github.com/igadmg/gamemath v0.0.0-20250410222204-28d83654fdf2
 	github.com/igadmg/goex v0.0.0-20250407220752-712c023573b8
-	github.com/igadmg/gogen v0.0.0-20250410220610-3903be0a0ba3
-	gopkg.in/yaml.v3 v3.0.1
+	github.com/igadmg/gogen v0.0.0-20250417112936-cea5ee7cef95
 	gonum.org/v1/gonum v0.16.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
