@@ -402,7 +402,7 @@ func (t *Type) Prepare(tf core.TypeFactory) error {
 	}
 
 	for _, base := range t.BaseFields {
-		if strings.HasPrefix(base.GetTypeName(), "ecs.Entity") {
+		if strings.HasPrefix(base.GetTypeName(), "ecs.Archetype") {
 			t.HaveBaseEntity = true
 			break
 		}
