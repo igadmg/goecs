@@ -56,6 +56,10 @@ func (id Id) SetId(nid uint64) Id {
 	return MakeId(nid, id.GetType())
 }
 
+func (id Id) GetIndex() uint64 {
+	return (id.value & IdMask) - 1
+}
+
 func (id Id) GetType() uint32 {
 	return (uint32)((id.value & TypeMask) >> TypeMaskShift)
 }
