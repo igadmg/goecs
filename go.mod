@@ -7,7 +7,7 @@ replace github.com/igadmg/gogen => ../../pkg/gogen
 require (
 	deedles.dev/xiter v0.2.1
 	github.com/hymkor/go-lazy v0.5.0
-	github.com/igadmg/gamemath v0.0.0-20250410222204-28d83654fdf2
+	github.com/igadmg/gamemath v0.0.0-20250502152201-14a551f600ad
 	github.com/igadmg/goex v0.0.0-20250502115452-bd40b01ba4eb
 	github.com/igadmg/gogen v0.0.0-20250502134002-bf191499d781
 	gonum.org/v1/gonum v0.16.0
