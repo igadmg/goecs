@@ -2,14 +2,7 @@ module github.com/igadmg/goecs
 
 go 1.24
 
-replace (
-	deedles.dev/xiter => ../../pkg/xiter
-	github.com/hymkor/go-lazy => ../../pkg/go-lazy
-	github.com/igadmg/gamemath => ../../pkg/gamemath
-	github.com/igadmg/goel => ../../cmd/goel
-	github.com/igadmg/goex => ../../pkg/goex
-	github.com/igadmg/gogen => ../../pkg/gogen
-)
+replace github.com/igadmg/gogen => ../../pkg/gogen
 
 require (
 	deedles.dev/xiter v0.2.1
