@@ -12,6 +12,8 @@ github.com/igadmg/gamemath v0.0.0-20250410222204-28d83654fdf2 h1:SwNDZtDMiQiDXMr
 github.com/igadmg/gamemath v0.0.0-20250410222204-28d83654fdf2/go.mod h1:ht+Hnhqlek+UAzZiyf3zYNukFmfJHuAEOLKJrshPrQo=
 github.com/igadmg/goel v0.0.0-20250502115513-5b04c396aea2 h1:1AZ5DlPkuwpjE5x8GOICLmuP/RzusTjr1JVr170OyTY=
 github.com/igadmg/goel v0.0.0-20250502115513-5b04c396aea2/go.mod h1:mA2+ibctRg10sWIrKvOgr/GKRSgVHbwhNwgEK5LRmBE=
+github.com/igadmg/goel v0.0.0-20250502134036-a60922f656ed h1:ZMwWbv9HgJUYCsbWSdymXXl0ZcO3rBGKVYIpioDn6cM=
+github.com/igadmg/goel v0.0.0-20250502134036-a60922f656ed/go.mod h1:2ve5IfYRoXY87Pt4cdPmLKJNL9Hnn82OealKTgin4h0=
 github.com/igadmg/goex v0.0.0-20250502115452-bd40b01ba4eb h1:Fu2lwvI20ZfrJN9uaR/zjQeN3VMU20hFuBLkRCgE0O8=
 github.com/igadmg/goex v0.0.0-20250502115452-bd40b01ba4eb/go.mod h1:oRtmQqRpH/fasU3HEeYAoWhDfM5oLz04zIvkqsQ75AU=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
