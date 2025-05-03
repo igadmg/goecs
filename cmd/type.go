@@ -47,17 +47,17 @@ type EcsTypeI interface {
 }
 
 type Type struct {
-	core.Type
+	core.Type `yaml:",inline"`
 
-	EType     EcsType
-	QueryTags string
+	EType     EcsType `yaml:""`
+	QueryTags string  `yaml:""`
 
 	Components       *lazy.Of[[]EcsFieldI]
 	StructComponents *lazy.Of[[]EcsFieldI]
 	QueryComponents  *lazy.Of[[]EcsFieldI]
 	needStore        *lazy.Of[bool]
 	needAs           *lazy.Of[bool]
-	HaveBaseEntity   bool
+	HaveBaseEntity   bool `yaml:""`
 }
 
 var _ EcsTypeI = (*Type)(nil)

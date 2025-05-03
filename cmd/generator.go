@@ -3,6 +3,7 @@ package cmd
 import (
 	"bytes"
 	"go/ast"
+	"io"
 	"iter"
 	"slices"
 
@@ -26,6 +27,16 @@ type GeneratorEcs struct {
 }
 
 var _ core.Generator = (*GeneratorEcs)(nil)
+
+func (g *GeneratorEcs) MarshalYAML() (interface{}, error) {
+	return map[string]any{
+		"components": g.components,
+		"entities":   g.entities,
+		"queries":    g.queries,
+		"features":   g.features,
+		"systems":    g.systems,
+	}, nil
+}
 
 func NewGeneratorEcs() core.Generator {
 	g := &GeneratorEcs{
@@ -230,6 +241,10 @@ func (g ecsNode) Attributes() (attrs []encoding.Attribute) {
 	}
 
 	return
+}
+
+func (g *GeneratorEcs) Yaml(w io.Writer) error {
+	return nil
 }
 
 func (g *GeneratorEcs) Graph() graph.Graph {
