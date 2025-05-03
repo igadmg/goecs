@@ -12,6 +12,13 @@ type BaseStorage struct {
 	typeId  uint32
 	age     uint64
 
+	// Idea: Implement list of retaken ids, fill it if we are iterating over storage (??abstract storage iteration??)
+	// if we are iterating further then taken id put it to retaken list
+	// iterate retaken list after iterating all entites
+	// But seems that makes multithreaded implementation more complex.
+	// but anyway we can fallback to command queue anytime
+	// Bevys spawn trees looks horrifying tbh
+
 	Ids []Id
 }
 
@@ -38,6 +45,9 @@ func (s *BaseStorage) EntityIds() iter.Seq[Id] {
 				}
 			}
 		}
+
+		// Idea: here we can iterate retaken id list to include
+		// new object to the processing
 	}
 }
 
