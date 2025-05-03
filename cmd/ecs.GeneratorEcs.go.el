@@ -21,7 +21,7 @@ import (
 	"iter"
 	"slices"
 
-	ecs "github.com/igadmg/goecs"
+	ecs "github.com/igadmg/goecs/ecs"
 	"github.com/igadmg/goex/slicesex"
 	"github.com/igadmg/gamemath/vector2"
 <?
@@ -31,9 +31,9 @@ import (
 		}
 ?>
 	"<?= p.Pkg.PkgPath ?>"
-<?		
+<?
 	}
-?>	
+?>
 )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,7 +137,7 @@ func _Query_constraints(v bool) bool {
 		name := strings.ReplaceAll(g.LocalTypeName(q.Query), ".", "_")
 ?>
 		_<?= name ?>_constraints()
-<?	
+<?
 	}
 ?>
 	}
