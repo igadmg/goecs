@@ -25,12 +25,4 @@ pprof/
 # Go workspace file
 go.work
 
-ecs.GeneratorEcs.genAs.go
-ecs.GeneratorEcs.generateArchetype.go
-ecs.GeneratorEcs.generateComponent.go
-ecs.GeneratorEcs.generateDebug.go
-ecs.GeneratorEcs.generateFunctions.go
-ecs.GeneratorEcs.generateQuery.go
-ecs.GeneratorEcs.generateSystem.go
-ecs.GeneratorEcs.go
 

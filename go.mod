@@ -1,6 +1,6 @@
 module github.com/igadmg/goecs
 
-go 1.24
+go 1.24.2
 
 replace github.com/igadmg/gogen => ../../pkg/gogen
 
