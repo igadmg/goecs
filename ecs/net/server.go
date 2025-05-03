@@ -12,7 +12,7 @@ type Server struct {
 	wg sync.WaitGroup
 }
 
-func (s *Server) Listen(rcvr any, ctx context.Context) {
+func (s *Server) Listen(ctx context.Context) {
 	cfg := net.ListenConfig{}
 	listener, err := cfg.Listen(ctx, "tcp", ":1234")
 	if err != nil {
@@ -22,8 +22,6 @@ func (s *Server) Listen(rcvr any, ctx context.Context) {
 	defer listener.Close()
 
 	fmt.Println("Сервер запущен на порту 1234")
-
-	rpc.Register(rcvr)
 
 	// Принимаем соединения и обслуживаем RPC-запросы
 	for {
@@ -45,5 +43,11 @@ func (s *Server) Listen(rcvr any, ctx context.Context) {
 				rpc.ServeConn(conn)
 			}()
 		}
+	}
+}
+
+func (s *Server) Register(types ...any) {
+	for _, rcvr := range types {
+		rpc.Register(rcvr)
 	}
 }
