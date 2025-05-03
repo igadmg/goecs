@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"net"
 	"net/rpc"
+	"sync"
 )
 
 type Server struct {
+	wg sync.WaitGroup
 }
 
 func (s *Server) Listen(rcvr any, ctx context.Context) {
@@ -25,11 +27,23 @@ func (s *Server) Listen(rcvr any, ctx context.Context) {
 
 	// Принимаем соединения и обслуживаем RPC-запросы
 	for {
-		conn, err := listener.Accept()
-		if err != nil {
-			fmt.Println("Ошибка при принятии соединения:", err)
-			continue
+		select {
+		case <-ctx.Done():
+			fmt.Println("Закрываем сервер. Ожидаем задачи")
+			s.wg.Wait()
+			fmt.Println("сервер закрыт")
+		default:
+			conn, err := listener.Accept()
+			if err != nil {
+				fmt.Println("Ошибка при принятии соединения:", err)
+				continue
+			}
+
+			s.wg.Add(1)
+			go func() {
+				defer s.wg.Done()
+				rpc.ServeConn(conn)
+			}()
 		}
-		go rpc.ServeConn(conn)
 	}
 }
