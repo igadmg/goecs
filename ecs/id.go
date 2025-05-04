@@ -3,7 +3,7 @@ package ecs
 import "fmt"
 
 type Id struct {
-	value uint64
+	Value uint64
 }
 
 type IdType_ struct {
@@ -45,49 +45,49 @@ func (id Id) String() string {
 }
 
 func (id Id) IsNull() bool {
-	return id.value == 0
+	return id.Value == 0
 }
 
 func (id Id) GetId() uint64 {
-	return id.value & IdMask
+	return id.Value & IdMask
 }
 
 func (id Id) SetId(nid uint64) Id {
 	return MakeId(nid, id.GetType())
 }
 
-func (id Id) GetIndex() uint64 {
-	return (id.value & IdMask) - 1
+func (id Id) GetIndex() int {
+	return int((id.Value & IdMask) - 1)
 }
 
 func (id Id) GetType() uint32 {
-	return (uint32)((id.value & TypeMask) >> TypeMaskShift)
+	return (uint32)((id.Value & TypeMask) >> TypeMaskShift)
 }
 
 func (id Id) IsAllocated() bool {
-	return (id.value & AllocateBit) != 0
+	return (id.Value & AllocateBit) != 0
 }
 
 func (id Id) IsStored() bool {
-	return (id.value & StoreBit) != 0
+	return (id.Value & StoreBit) != 0
 }
 
 func (id Id) Allocate() Id {
-	id.value = id.value | AllocateBit
+	id.Value = id.Value | AllocateBit
 	return id
 }
 
 func (id Id) Free() Id {
-	id.value = id.value & ^AllocateBit
+	id.Value = id.Value & ^AllocateBit
 	return id
 }
 
 func (id Id) Store() Id {
-	id.value = id.value | StoreBit
+	id.Value = id.Value | StoreBit
 	return id
 }
 
 func (id Id) Restore() Id {
-	id.value = id.value & ^StoreBit
+	id.Value = id.Value & ^StoreBit
 	return id
 }
