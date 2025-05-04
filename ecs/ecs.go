@@ -25,3 +25,5 @@ func Static[T any](id Id) T {
 	var t T
 	return t
 }
+
+func RefId[T any](u Ref[T]) Id { return u.Id }
