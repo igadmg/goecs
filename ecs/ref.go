@@ -48,7 +48,7 @@ type IsEntityPtr[T any] interface {
 	*T
 }
 
-func MakeRef[T any, V IsEntityPtr[T]](id Id) Ref[T] {
+func MakeRef[T any](id Id) Ref[T] {
 	return Ref[T]{
 		Id:     id,
 		isNull: true,
