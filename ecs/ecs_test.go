@@ -1,7 +1,10 @@
 package ecs
 
 import (
+	"slices"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestId_String(t *testing.T) {
@@ -23,4 +26,13 @@ func TestId_String(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_RepackList(t *testing.T) {
+	free_ids := []int{10, 3, 7, 4, 16}
+
+	slices.Sort(free_ids)
+	i, ok := slices.BinarySearch(free_ids, 6)
+	assert.Equal(t, 2, i)
+	assert.False(t, ok)
 }

@@ -28,6 +28,14 @@ func MakeBaseStorage(typeId uint32) BaseStorage {
 	}
 }
 
+func BaseStorageReserve[T any](a []T, size int) []T {
+	return slicesex.Reserve(a, size)
+}
+
+func BaseStorageAppend[T any](a []T, b []T) []T {
+	return append(a, b...)
+}
+
 func (s *BaseStorage) TypeId() uint32 {
 	return s.typeId
 }
