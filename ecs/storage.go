@@ -163,6 +163,10 @@ func (s *BaseStorage) EntitiesCount() int64 {
 }
 
 func (s *BaseStorage) Repack(id Id) Id {
+	if len(s.id_pool) == 0 {
+		return id
+	}
+
 	i, ok := slices.BinarySearchFunc(s.id_pool, id, func(a, b Id) int {
 		return cmp.Compare(a.GetIndex(), b.GetIndex())
 	})
