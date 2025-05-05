@@ -3,13 +3,14 @@ package ecs
 import (
 	"cmp"
 	"iter"
+	"log/slog"
 	"slices"
 
 	"github.com/igadmg/goex/slicesex"
 )
 
 type BaseStorage struct {
-	id      uint64
+	id_last uint64
 	id_pool []Id
 	typeId  uint32
 	age     uint64
@@ -61,11 +62,16 @@ func (s *BaseStorage) EntityIds() iter.Seq[Id] {
 	}
 }
 
+func (s *BaseStorage) PackedIds() {
+	s.id_pool = s.id_pool[:]
+	s.id_last = uint64(len(s.Ids))
+}
+
 func (s *BaseStorage) NewId() (id Id) {
 	l := len(s.id_pool)
 	if l == 0 {
-		s.id++
-		id = MakeId(s.id, s.typeId)
+		s.id_last++
+		id = MakeId(s.id_last, s.typeId)
 	} else {
 		id = s.id_pool[l-1]
 		s.id_pool = s.id_pool[:l-1]
@@ -80,8 +86,8 @@ func (s *BaseStorage) NewId() (id Id) {
 }
 
 func (s *BaseStorage) NewGridId() (id Id) {
-	s.id++
-	id = MakeId(s.id, s.typeId)
+	s.id_last++
+	id = MakeId(s.id_last, s.typeId)
 
 	// init
 	id = id.
@@ -153,7 +159,7 @@ func (s *BaseStorage) Free(id Id) Id {
 }
 
 func (s *BaseStorage) EntitiesCount() int64 {
-	return int64(s.id) - int64(len(s.id_pool))
+	return int64(s.id_last) - int64(len(s.id_pool))
 }
 
 func (s *BaseStorage) Repack(id Id) Id {
@@ -162,7 +168,7 @@ func (s *BaseStorage) Repack(id Id) Id {
 	})
 
 	if ok {
-		//log.
+		slog.Warn("Pooled entity id referenced duting pack.", "Id", id)
 	}
 
 	return id.setIndex(id.GetIndex() - i)
