@@ -1,7 +1,9 @@
 package ecs
 
 import (
+	"cmp"
 	"iter"
+	"slices"
 
 	"github.com/igadmg/goex/slicesex"
 )
@@ -152,4 +154,22 @@ func (s *BaseStorage) Free(id Id) Id {
 
 func (s *BaseStorage) EntitiesCount() int64 {
 	return int64(s.id) - int64(len(s.id_pool))
+}
+
+func (s *BaseStorage) Repack(id Id) Id {
+	i, ok := slices.BinarySearchFunc(s.id_pool, id, func(a, b Id) int {
+		return cmp.Compare(a.GetIndex(), b.GetIndex())
+	})
+
+	if ok {
+		//log.
+	}
+
+	return id.setIndex(id.GetIndex() - i)
+}
+
+func (s *BaseStorage) PrePack() {
+	slices.SortFunc(s.id_pool, func(a, b Id) int {
+		return cmp.Compare(a.GetIndex(), b.GetIndex())
+	})
 }

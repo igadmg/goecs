@@ -57,7 +57,11 @@ func (id Id) SetId(nid uint64) Id {
 }
 
 func (id Id) GetIndex() int {
-	return int((id.Value & IdMask) - 1)
+	return int(id.GetId() - 1)
+}
+
+func (id Id) setIndex(i int) Id {
+	return id.SetId(uint64(i + 1))
 }
 
 func (id Id) GetType() uint32 {

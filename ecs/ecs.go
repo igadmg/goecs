@@ -1,6 +1,11 @@
 package ecs
 
-import "github.com/igadmg/goex/slicesex"
+import (
+	"encoding/gob"
+	"iter"
+
+	"github.com/igadmg/goex/slicesex"
+)
 
 type MetaTag struct{} // Used to add tags to structs
 
@@ -16,7 +21,7 @@ func RequestRegisterTypes(num int) []any {
 	return registeredTypes
 }
 
-func Static[T any](id Id) T {
+func Storage[T any](id Id) T {
 	i := id.GetType()
 	if int(i) < len(registeredTypes) {
 		return registeredTypes[i].(T)
@@ -26,4 +31,29 @@ func Static[T any](id Id) T {
 	return t
 }
 
+func StorageSeq[T any]() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, rt := range registeredTypes {
+			if t, ok := rt.(T); ok {
+				if !yield(t) {
+					return
+				}
+			}
+		}
+	}
+}
+
 func RefId[T any](u Ref[T]) Id { return u.Id }
+
+type Packer interface {
+	PrePack()
+	Pack()
+}
+
+type Saver interface {
+	Save(w *gob.Encoder) error
+}
+
+type Loader interface {
+	Load(w *gob.Decoder) error
+}
