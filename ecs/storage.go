@@ -35,6 +35,10 @@ func BaseStorageReserve[T any](a []T, size int) []T {
 	return slicesex.Reserve(a, size)
 }
 
+func BaseStorageAllocate[T any](a []T, size int) []T {
+	return slicesex.Reserve(a, size)[:size]
+}
+
 func BaseStorageAppend[T any](a []T, b []T) []T {
 	return append(a, b...)
 }
