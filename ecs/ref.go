@@ -17,6 +17,10 @@ type IsFreeable interface {
 	Free()
 }
 
+type IsReferable[T any] interface {
+	Ref() Ref[T]
+}
+
 type IsStorable interface {
 	Store()
 	Restore()
