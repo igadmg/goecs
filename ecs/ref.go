@@ -6,7 +6,7 @@ import (
 )
 
 type IsAllocatable[T any] interface {
-	Allocate() Ref[T]
+	Allocate() T
 }
 
 type IsLoadable[T any] interface {
@@ -161,7 +161,7 @@ func (r *Ref[T]) Restore() {
 
 	func(t any) {
 		if ai, ok := t.(IsAllocatable[T]); ok {
-			*r = ai.Allocate()
+			r.Ptr = ai.Allocate()
 		}
 		if si, ok := t.(IsStorable); ok {
 			si.Restore()

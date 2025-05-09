@@ -1,7 +1,7 @@
 package ecs
 
 type ArchetypeI[T any] interface {
-	Allocate() Ref[T]
+	Allocate() T
 }
 
 type Archetype[T any] struct {
