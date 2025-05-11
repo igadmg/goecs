@@ -21,14 +21,15 @@ func RequestRegisterTypes(num int) []any {
 	return registeredTypes
 }
 
-func Storage[T any](id Id) T {
+func Storage[T any](id Id) (T, bool) {
 	i := id.GetType()
 	if int(i) < len(registeredTypes) {
-		return registeredTypes[i].(T)
+		t, ok := registeredTypes[i].(T)
+		return t, ok
 	}
 
 	var t T
-	return t
+	return t, false
 }
 
 func StorageSeq[T any]() iter.Seq[T] {
@@ -41,6 +42,23 @@ func StorageSeq[T any]() iter.Seq[T] {
 			}
 		}
 	}
+}
+
+type WithAny interface {
+	WithAny(id Id, do func(any))
+}
+
+func Interface[T any](id Id) (r T, rok bool) {
+	if s, ok := Storage[WithAny](id); ok {
+		s.WithAny(id, func(i any) {
+			if t, ok := i.(T); ok {
+				r = t
+				rok = true
+			}
+		})
+	}
+
+	return
 }
 
 func RefId[T any](u Ref[T]) Id { return u.Id }
