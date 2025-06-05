@@ -87,6 +87,10 @@ func (r *Ref[T]) Get() T {
 	return r.Ptr
 }
 
+func (r *Ref[T]) With(fn func(t T)) {
+	fn(r.Get())
+}
+
 func Enum[T any](refs []Ref[T]) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for _, ref := range refs {
