@@ -7,10 +7,16 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/igadmg/gamemath v0.0.0-20250504115109-b40bca214f5a h1:WNo9qVSPs358Ocy8Bw18I/khpbNM5KZ4dM0vMQSM45k=
 github.com/igadmg/gamemath v0.0.0-20250504115109-b40bca214f5a/go.mod h1:6ASoEdtduFOoLDjXVudfKC5dv08ymgB+2hgM81eQyIA=
+github.com/igadmg/gamemath v0.0.0-20250511161249-851d8a45436a h1:wriImQAVaNt5WNqC63qD3hhtrPfTNSnX3TIddZ6Cdrc=
+github.com/igadmg/gamemath v0.0.0-20250511161249-851d8a45436a/go.mod h1:vYPaZJ4OZVxHiVlwLcQvQNWoaLe64QEcN2aJ/tf6HUc=
 github.com/igadmg/goel v0.0.0-20250503114739-85cb97c874bd h1:vdHrAZQE8iX5OHQIrCtqn6wtL+LUHwX5CEbRDT7JgYk=
 github.com/igadmg/goel v0.0.0-20250503114739-85cb97c874bd/go.mod h1:VpVddqQDR0AW7YUc1LWeO58pKgaspZdNpRn1CDQqHgQ=
+github.com/igadmg/goel v0.0.0-20250505095900-2712ee711082 h1:E3j5GNBg6oOd5DtrH8cAUOUz6FjX/Yn+oyKp5Wl5nl8=
+github.com/igadmg/goel v0.0.0-20250505095900-2712ee711082/go.mod h1:OQimoqXBUVf/bAwjUkvGzr0UcCpjc67DLKWUHKGVhKE=
 github.com/igadmg/goex v0.0.0-20250504115042-88c40cda4bf5 h1:WoxNnNDNZp5E48U1D8t2v7xIK8EZHvwSP9oflwx0w2E=
 github.com/igadmg/goex v0.0.0-20250504115042-88c40cda4bf5/go.mod h1:tcuWmO3RspNhXYLdAcI4dNVsZjlHq/uot3JKF81sKS4=
+github.com/igadmg/goex v0.0.0-20250511161240-125903d9a179 h1:B4vVC5IJ4/ocsDDL/GrwVMioHiyXlQ2Uk0t1AXWP2uk=
+github.com/igadmg/goex v0.0.0-20250511161240-125903d9a179/go.mod h1:CSPxD8igFyLAqcsz7RqBLFIU24h+SvwIY4yZrHbGLwI=
 github.com/kr/pretty v0.2.1/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfnI=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
@@ -26,6 +32,8 @@ github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOf
 github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
 golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0 h1:R84qjqJb5nVJMxqWYb3np9L5ZsaDtB+a39EqjV0JSUM=
 golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0/go.mod h1:S9Xr4PYopiDyqSyp5NjCrhFrqg6A5zA2E/iPHPhqnS8=
+golang.org/x/exp v0.0.0-20250606033433-dcc06ee1d476 h1:bsqhLWFR6G6xiQcb+JoGqdKdRU6WzPWmK8E0jxTjzo4=
+golang.org/x/exp v0.0.0-20250606033433-dcc06ee1d476/go.mod h1:3//PLf8L/X+8b4vuAfHzxeRUl04Adcb341+IGKfnqS8=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c h1:Hei/4ADfdWqJk1ZMxUNpqntNwaWcugrBjAiHlqqRiVk=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod h1:JHkPIbrfpd72SG/EVd6muEfDQjcINNoR0C8j2r3qZ4Q=
